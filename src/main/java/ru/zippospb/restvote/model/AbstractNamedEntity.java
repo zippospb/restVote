@@ -1,4 +1,4 @@
-package model;
+package ru.zippospb.restvote.model;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;

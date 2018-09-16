@@ -1,4 +1,4 @@
-package model;
+package ru.zippospb.restvote.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;

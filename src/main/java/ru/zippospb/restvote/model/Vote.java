@@ -1,4 +1,4 @@
-package model;
+package ru.zippospb.restvote.model;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
