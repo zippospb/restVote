@@ -4,14 +4,12 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Email
 @Entity
-@Table(name = "votes", uniqueConstraints = @UniqueConstraint(name = "vote_unique_user_idx", columnNames = {"user_id", "date"}))
+@Table(name = "votes", uniqueConstraints = @UniqueConstraint(name = "vote_unique_user_date_idx", columnNames = {"user_id", "date"}))
 public class Vote extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
