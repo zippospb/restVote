@@ -1,10 +1,12 @@
 package ru.zippospb.restvote.model;
 
+import org.springframework.data.domain.Persistable;
+
 import javax.persistence.*;
 
 @MappedSuperclass
-public abstract class AbstractBaseEntity {
-    private static final int START_SEQ = 100_000;
+public abstract class AbstractBaseEntity implements Persistable<Integer> {
+    public static final int START_SEQ = 100_000;
 
 
     @Id
@@ -22,7 +24,12 @@ public abstract class AbstractBaseEntity {
         return id;
     }
 
-    public boolean isNew(){
-        return id == null;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean isNew() {
+        return getId() == null;
     }
 }

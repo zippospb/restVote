@@ -1,11 +1,12 @@
 package ru.zippospb.restvote.model;
 
+import org.springframework.util.CollectionUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email", name = "user_unique_email_idx")) //добавить unicueConstraints
@@ -27,22 +28,28 @@ public class User extends AbstractNamedEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Vote> votes;
 
     public User() {}
 
-    public User(Integer id,
-                @NotBlank @Size(min = 2, max = 100) String name,
-                @Email @NotBlank @Size(max = 100) String email,
-                @NotBlank @Size(min = 5, max = 100) String password) {
+    public User(User user){
+        this.id = user.id;
+        this.name = user.name;
+        this.email = user.email;
+        this.password = user.password;
+        this.roles = user.roles;
+    }
+
+    public User(Integer id, String name, String email, String password, Role role, Role... roles) {
         super(id, name);
         this.email = email;
         this.password = password;
+        this.roles = EnumSet.of(role, roles);
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRoles(Collection<Role> roles) {
+        this.roles = CollectionUtils.isEmpty(roles) ? Collections.emptySet() : EnumSet.copyOf(roles);
     }
 
     public void setVotes(List<Vote> votes) {

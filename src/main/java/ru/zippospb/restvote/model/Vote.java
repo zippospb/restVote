@@ -21,6 +21,8 @@ public class Vote extends AbstractBaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     private Restaurant restaurant;
 
@@ -31,4 +33,39 @@ public class Vote extends AbstractBaseEntity {
     @Column(name = "time", columnDefinition = "time default now()")
     @NotNull
     private LocalTime time;
+
+    public Vote() {
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setTime(LocalTime time) {
+        this.time = time;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
 }

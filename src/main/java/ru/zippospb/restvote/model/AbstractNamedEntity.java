@@ -10,11 +10,19 @@ public abstract class AbstractNamedEntity extends AbstractBaseEntity {
     @NotBlank
     @Size(min = 2, max = 100)
     @Column(name = "name", nullable = false)
-    private String name;
+    protected String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     protected AbstractNamedEntity() { }
 
-    AbstractNamedEntity(Integer id, @NotBlank @Size(min = 2, max = 100) String name) {
+    AbstractNamedEntity(Integer id, String name) {
         super(id);
         this.name = name;
     }
