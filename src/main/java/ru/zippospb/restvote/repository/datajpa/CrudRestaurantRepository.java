@@ -4,14 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
-import ru.zippospb.restvote.model.User;
+import ru.zippospb.restvote.model.Restaurant;
 
 @Transactional(readOnly = true)
-public interface CrudUserRepository extends JpaRepository<User, Integer> {
-    @Transactional
+public interface CrudRestaurantRepository extends JpaRepository<Restaurant, Integer> {
     @Modifying
-    @Query("DELETE FROM User u WHERE u.id=?1")
+    @Transactional
+    @Query("DELETE FROM Restaurant r WHERE r.id=?1")
     int delete(int id);
-
-    User getByEmail(String email);
 }

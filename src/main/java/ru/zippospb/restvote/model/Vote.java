@@ -66,4 +66,15 @@ public class Vote extends AbstractBaseEntity {
     public LocalTime getTime() {
         return time;
     }
+
+    @Override
+    public String toString() {
+        return "Vote{" +
+                super.toString() +
+                "user=" + user +
+                ", restaurant=" + restaurant +
+                ", date=" + date +
+                ", time=" + time +
+                "} ";
+    }
 }
