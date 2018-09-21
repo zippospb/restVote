@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.zippospb.restvote.TestUtil.readFromJson;
+import static ru.zippospb.restvote.TestUtil.userHttpBasic;
 import static ru.zippospb.restvote.UserTestData.*;
 
 class AdminRestControllerTest extends AbstractControllerTest {
@@ -25,7 +26,8 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testGetAll() throws Exception {
-        mockMvc.perform(get(REST_URL))
+        mockMvc.perform(get(REST_URL)
+                .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -34,7 +36,8 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testGet() throws Exception {
-        mockMvc.perform(get(REST_URL + USER1_ID))
+        mockMvc.perform(get(REST_URL + USER1_ID)
+                .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -46,7 +49,8 @@ class AdminRestControllerTest extends AbstractControllerTest {
         User expected = getNew();
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(expected)))
+                .content(JsonUtil.writeValue(expected))
+                .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isCreated());
 
@@ -59,7 +63,8 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testDelete() throws Exception {
-        mockMvc.perform(delete(REST_URL + USER1_ID))
+        mockMvc.perform(delete(REST_URL + USER1_ID)
+                .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
@@ -73,7 +78,8 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
         mockMvc.perform(put(REST_URL + USER1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updated)))
+                .content(JsonUtil.writeValue(updated))
+                .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
@@ -82,10 +88,24 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testGetByMail() throws Exception {
-        mockMvc.perform(get(REST_URL + "by?email=" + ADMIN_EMAIL))
+        mockMvc.perform(get(REST_URL + "by?email=" + ADMIN_EMAIL)
+                .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(contentJson(ADMIN));
+    }
+
+    @Test
+    void testGetUnAuth() throws Exception {
+        mockMvc.perform(get(REST_URL))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testInvalidRole() throws Exception {
+        mockMvc.perform(get(REST_URL)
+                .with(userHttpBasic(USER1)))
+                .andExpect(status().isForbidden());
     }
 }

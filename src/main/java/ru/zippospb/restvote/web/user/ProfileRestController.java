@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.zippospb.restvote.model.User;
-import ru.zippospb.restvote.web.SecurityUtil;
+import ru.zippospb.restvote.web.security.SecurityUtil;
 
 import javax.validation.Valid;
 import java.net.URI;

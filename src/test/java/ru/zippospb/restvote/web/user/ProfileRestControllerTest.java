@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.zippospb.restvote.TestUtil.readFromJson;
+import static ru.zippospb.restvote.TestUtil.userHttpBasic;
 import static ru.zippospb.restvote.UserTestData.*;
 import static ru.zippospb.restvote.web.user.ProfileRestController.REST_URL;
 
@@ -23,7 +24,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testGet() throws Exception {
-        mockMvc.perform(get(REST_URL))
+        mockMvc.perform(get(REST_URL)
+                .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -32,7 +34,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testDelete() throws Exception {
-        mockMvc.perform(delete(REST_URL))
+        mockMvc.perform(delete(REST_URL)
+                .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
@@ -63,10 +66,17 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
         ResultActions action = mockMvc.perform(put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updated)))
+                .content(JsonUtil.writeValue(updated))
+                .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
         assertMatch(repository.get(USER1_ID), updated);
+    }
+
+    @Test
+    void testGetUnAuth() throws Exception {
+        mockMvc.perform(get(REST_URL))
+                .andExpect(status().isUnauthorized());
     }
 }
