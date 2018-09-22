@@ -12,12 +12,14 @@ import javax.validation.constraints.Size;
 @Table(name = "dishes")
 public class Dish extends AbstractNamedEntity {
 
+    @NotNull
+    @Size(min = 1)
     private int price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Restaurant restaurant;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "restaurant_id", nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private Restaurant restaurant;
 
     public Dish() {}
 
@@ -27,7 +29,7 @@ public class Dish extends AbstractNamedEntity {
 
     public Dish(Integer id, String name, Restaurant restaurant, int price) {
         super(id, name);
-        this.restaurant = restaurant;
+//        this.restaurant = restaurant;
         this.price = price;
     }
 
@@ -39,20 +41,20 @@ public class Dish extends AbstractNamedEntity {
         this.price = price;
     }
 
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
+//    public void setRestaurant(Restaurant restaurant) {
+//        this.restaurant = restaurant;
+//    }
+//
+//    public Restaurant getRestaurant() {
+//        return restaurant;
+//    }
 
     @Override
     public String toString() {
         return "Dish{" +
                 super.toString() +
                 ", price=" + price +
-                ", restaurant=" + restaurant.getId() +
+//                ", restaurant=" + restaurant.getId() +
                 "} ";
     }
 }

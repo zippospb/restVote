@@ -1,21 +1,13 @@
 package ru.zippospb.restvote;
 
-import org.springframework.test.web.servlet.ResultMatcher;
 import ru.zippospb.restvote.model.Dish;
 import ru.zippospb.restvote.model.Restaurant;
-import ru.zippospb.restvote.model.Role;
-import ru.zippospb.restvote.model.User;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static ru.zippospb.restvote.model.AbstractBaseEntity.START_SEQ;
-import static ru.zippospb.restvote.web.json.JsonUtil.writeIgnoreProps;
-
-//import ru.zippospb.restvote.web.json.JsonUtil;
-//import static ru.zippospb.restvote.web.json.JsonUtil.writeIgnoreProps;
 
 public class RestaurantTestData {
     public static final int REST1_ID = START_SEQ + 3;
@@ -63,11 +55,4 @@ public class RestaurantTestData {
         assertThat(actual).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
     }
 
-//    public static ResultMatcher contentJson(User... expected) {
-//        return content().json(writeIgnoreProps(Arrays.asList(expected), "votes", "password"));
-//    }
-//
-//    public static ResultMatcher contentJson(User expected) {
-//        return content().json(writeIgnoreProps(expected, "password"));
-//    }
 }

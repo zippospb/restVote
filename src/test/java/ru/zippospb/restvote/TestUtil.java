@@ -3,11 +3,17 @@ package ru.zippospb.restvote;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import ru.zippospb.restvote.model.Restaurant;
 import ru.zippospb.restvote.model.User;
 import ru.zippospb.restvote.web.json.JsonUtil;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static ru.zippospb.restvote.web.json.JsonUtil.writeValue;
 
 public class TestUtil {
     public static String getContent(ResultActions action) throws UnsupportedEncodingException {
@@ -20,5 +26,13 @@ public class TestUtil {
 
     public static RequestPostProcessor userHttpBasic(User user){
         return SecurityMockMvcRequestPostProcessors.authentication(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+    }
+
+    public static ResultMatcher contentJson(Restaurant... expected) {
+        return content().json(writeValue(Arrays.asList(expected)));
+    }
+
+    public static ResultMatcher contentJson(Restaurant expected) {
+        return content().json(writeValue(expected));
     }
 }

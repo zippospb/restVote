@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "restaurants")
 public class Restaurant extends AbstractNamedEntity {
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "restaurant")
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "restaurant_id")
     @OrderBy("name ASC")
 //    @Size(min = 3, max = 5)
     private List<Dish> dishes;
