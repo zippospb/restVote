@@ -13,7 +13,7 @@ import java.util.List;
 
 import static ru.zippospb.restvote.UserTestData.*;
 
-class UserRepositoryTest extends AbstractRepositoryTest {
+class DataJpaUserRepositoryImplTest extends AbstractRepositoryTest {
 
     @Autowired
     private UserRepository repository;

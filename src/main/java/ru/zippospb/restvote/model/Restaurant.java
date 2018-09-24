@@ -1,8 +1,8 @@
 package ru.zippospb.restvote.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
-import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,7 +13,7 @@ public class Restaurant extends AbstractNamedEntity {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id")
     @OrderBy("name ASC")
-//    @Size(min = 3, max = 5)
+    @JsonManagedReference
     private List<Dish> dishes;
 
     public Restaurant() {}

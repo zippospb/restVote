@@ -5,7 +5,6 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
-import ru.zippospb.restvote.model.Restaurant;
 import ru.zippospb.restvote.model.User;
 import ru.zippospb.restvote.web.json.JsonUtil;
 
@@ -28,11 +27,13 @@ public class TestUtil {
         return SecurityMockMvcRequestPostProcessors.authentication(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
     }
 
-    public static ResultMatcher contentJson(Restaurant... expected) {
+    @SafeVarargs
+    public static <T> ResultMatcher contentJson(T... expected) {
         return content().json(writeValue(Arrays.asList(expected)));
     }
 
-    public static ResultMatcher contentJson(Restaurant expected) {
+    public static <T> ResultMatcher contentJson(T expected) {
         return content().json(writeValue(expected));
     }
+
 }

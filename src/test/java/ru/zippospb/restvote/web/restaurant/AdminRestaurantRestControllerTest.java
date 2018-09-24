@@ -18,20 +18,21 @@ import static ru.zippospb.restvote.RestaurantTestData.*;
 import static ru.zippospb.restvote.TestUtil.readFromJson;
 import static ru.zippospb.restvote.TestUtil.userHttpBasic;
 import static ru.zippospb.restvote.UserTestData.ADMIN;
-import static ru.zippospb.restvote.UserTestData.USER1;
 
 
-class RestaurantControllerTest extends AbstractControllerTest {
-    private final static String ADMIN_REST_URL = "/rest/" + RestaurantController.ADMIN_REST_URL;
-    private final static String PROFILE_REST_URL = "/rest/" + RestaurantController.PROFILE_REST_URL;
+
+class AdminRestaurantRestControllerTest extends AbstractControllerTest {
+
+    private final static String REST_URL = AdminRestaurantRestController.REST_URL + "/";
+
 
     @Autowired
     private RestaurantRepository repository;
 
     @Test
     void testGetAll() throws Exception {
-        mockMvc.perform(get(PROFILE_REST_URL)
-                .with(userHttpBasic(USER1)))
+        mockMvc.perform(get(REST_URL)
+                .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -40,8 +41,8 @@ class RestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     void testGet() throws Exception {
-        mockMvc.perform(get(PROFILE_REST_URL + REST1_ID)
-                .with(userHttpBasic(USER1)))
+        mockMvc.perform(get(REST_URL + REST1_ID)
+                .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -51,7 +52,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
     @Test
     void testCreateWithLocation() throws Exception {
         Restaurant expected = getNew();
-        ResultActions action = mockMvc.perform(post(ADMIN_REST_URL)
+        ResultActions action = mockMvc.perform(post(REST_URL)
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(expected)))
@@ -71,7 +72,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
         updated.setName("измененный ресторан");
         updated.getDishes().remove(0);
 
-        mockMvc.perform(put(ADMIN_REST_URL + REST1_ID)
+        mockMvc.perform(put(REST_URL + REST1_ID)
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
@@ -83,7 +84,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     void testDelete() throws Exception {
-        mockMvc.perform(delete(ADMIN_REST_URL + REST1_ID)
+        mockMvc.perform(delete(REST_URL + REST1_ID)
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
@@ -93,7 +94,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     void testGetUnAuth() throws Exception {
-        mockMvc.perform(get(ADMIN_REST_URL))
+        mockMvc.perform(get(REST_URL))
                 .andExpect(status().isUnauthorized());
     }
 }

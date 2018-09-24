@@ -8,10 +8,9 @@ import ru.zippospb.restvote.repository.RestaurantRepository;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static ru.zippospb.restvote.RestaurantTestData.*;
 
-class RestaurantRepositoryTest extends AbstractRepositoryTest {
+class DataJpaRestaurantRepositoryImplTest extends AbstractRepositoryTest {
 
     @Autowired
     private RestaurantRepository repository;
