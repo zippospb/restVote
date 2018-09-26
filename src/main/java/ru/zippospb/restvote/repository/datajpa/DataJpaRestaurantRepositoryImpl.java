@@ -9,8 +9,12 @@ import java.util.List;
 
 @Repository
 public class DataJpaRestaurantRepositoryImpl implements RestaurantRepository {
+    private final CrudRestaurantRepository repository;
+
     @Autowired
-    CrudRestaurantRepository repository;
+    public DataJpaRestaurantRepositoryImpl(CrudRestaurantRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<Restaurant> getAll() {
@@ -25,6 +29,11 @@ public class DataJpaRestaurantRepositoryImpl implements RestaurantRepository {
     @Override
     public Restaurant save(Restaurant restaurant) {
         return repository.save(restaurant);
+    }
+
+    @Override
+    public Restaurant getReference(int restId) {
+        return repository.getOne(restId);
     }
 
     @Override

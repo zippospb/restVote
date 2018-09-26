@@ -12,4 +12,6 @@ public interface RestaurantRepository {
     Restaurant save(Restaurant restaurant);
 
     boolean delete(int id);
+
+    Restaurant getReference(int restId);
 }

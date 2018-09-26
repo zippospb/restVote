@@ -59,6 +59,6 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-
+        assertMatch(repository.getAll(REST1_ID), REST1_DISH2, REST1_DISH3, REST1_DISH4);
     }
 }

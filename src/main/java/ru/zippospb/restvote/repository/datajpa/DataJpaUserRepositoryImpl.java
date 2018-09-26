@@ -37,6 +37,11 @@ public class DataJpaUserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User getReference(int userId) {
+        return repository.getOne(userId);
+    }
+
+    @Override
     public User getByEmail(String email) {
         return repository.getByEmail(email);
     }
