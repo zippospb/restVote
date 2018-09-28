@@ -7,7 +7,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import ru.zippospb.restvote.model.User;
 import ru.zippospb.restvote.repository.UserRepository;
 import ru.zippospb.restvote.web.AbstractControllerTest;
-import ru.zippospb.restvote.web.json.JsonUtil;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -45,11 +44,19 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testGetNotFound() throws Exception {
+        mockMvc.perform(get(REST_URL + 1)
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     void testCreateWithLocation() throws Exception {
         User expected = getNew();
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(expected))
+                .content(jsonWithPassword(expected, expected.getPassword()))
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isCreated());
@@ -78,7 +85,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
         mockMvc.perform(put(REST_URL + USER1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updated))
+                .content(jsonWithPassword(updated, updated.getPassword()))
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());

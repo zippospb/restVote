@@ -7,7 +7,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import ru.zippospb.restvote.model.User;
 import ru.zippospb.restvote.repository.UserRepository;
 import ru.zippospb.restvote.web.AbstractControllerTest;
-import ru.zippospb.restvote.web.json.JsonUtil;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -48,7 +47,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
         ResultActions action = mockMvc.perform(post(REST_URL + "/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(created)))
+                .content(jsonWithPassword(created, created.getPassword())))
                 .andDo(print())
                 .andExpect(status().isCreated());
 
@@ -66,7 +65,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
         ResultActions action = mockMvc.perform(put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updated))
+                .content(jsonWithPassword(updated, updated.getPassword()))
                 .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isNoContent());

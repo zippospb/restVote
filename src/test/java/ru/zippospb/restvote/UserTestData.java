@@ -3,6 +3,7 @@ package ru.zippospb.restvote;
 import org.springframework.test.web.servlet.ResultMatcher;
 import ru.zippospb.restvote.model.Role;
 import ru.zippospb.restvote.model.User;
+import ru.zippospb.restvote.web.json.JsonUtil;
 //import ru.zippospb.restvote.web.json.JsonUtil;
 
 import java.util.Arrays;
@@ -45,8 +46,8 @@ public class UserTestData {
     public static ResultMatcher contentJson(User expected) {
         return content().json(writeIgnoreProps(expected, "password"));
     }
-//
-//    public static String jsonWithPassword(User user, String passw) {
-//        return JsonUtil.writeAdditionProps(user, "password", passw);
-//    }
+
+    public static String jsonWithPassword(User user, String passw) {
+        return JsonUtil.writeAdditionProps(user, "password", passw);
+    }
 }
