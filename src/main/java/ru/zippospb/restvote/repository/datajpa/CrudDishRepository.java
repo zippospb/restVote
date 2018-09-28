@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import ru.zippospb.restvote.model.Dish;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +22,6 @@ public interface CrudDishRepository extends JpaRepository<Dish, Integer> {
 
     @Query("SELECT d FROM Dish d WHERE d.restaurant.id=?1 AND d.id=?2")
     Optional<Dish> getById(int restId, int dishId);
+
+    List<Dish> getAllByRestaurantIdAndDate(int restId,LocalDate date);
 }

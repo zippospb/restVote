@@ -6,6 +6,8 @@ import ru.zippospb.restvote.model.Dish;
 import ru.zippospb.restvote.repository.AbstractRepositoryTest;
 import ru.zippospb.restvote.repository.DishRepository;
 
+import java.time.LocalDate;
+
 import static ru.zippospb.restvote.DishTestData.*;
 import static ru.zippospb.restvote.RestaurantTestData.REST1;
 import static ru.zippospb.restvote.RestaurantTestData.REST1_ID;
@@ -23,7 +25,7 @@ class DataJpaDishRepositoryImplTest extends AbstractRepositoryTest {
 
     @Test
     void testGetAll() {
-        assertMatch(repository.getAll(REST1_ID), REST1_DISHES);
+        assertMatch(repository.getAll(REST1_ID), REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4, REST1_OLD_DISH);
     }
 
     @Test
@@ -31,12 +33,17 @@ class DataJpaDishRepositoryImplTest extends AbstractRepositoryTest {
         Dish created = getNewDish();
         created.setRestaurant(REST1);
         repository.save(created);
-        assertMatch(repository.getAll(REST1_ID), REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4, created);
+        assertMatch(repository.getAll(REST1_ID), REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4, REST1_OLD_DISH, created);
     }
 
     @Test
     void testDelete() {
         repository.delete(REST1_DISH1_ID, REST1_ID);
-        assertMatch(repository.getAll(REST1_ID), REST1_DISH2, REST1_DISH3, REST1_DISH4);
+        assertMatch(repository.getAll(REST1_ID), REST1_DISH2, REST1_DISH3, REST1_DISH4, REST1_OLD_DISH);
+    }
+
+    @Test
+    void testGetAllByDate() {
+        assertMatch(repository.getAllByDate(REST1_ID, LocalDate.now()), REST1_DISHES);
     }
 }

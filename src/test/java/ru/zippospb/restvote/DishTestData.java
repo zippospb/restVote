@@ -2,6 +2,7 @@ package ru.zippospb.restvote;
 
 import ru.zippospb.restvote.model.Dish;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class DishTestData {
     public static final Dish REST1_DISH2 = new Dish(100007,	"Салат от шеф-повара", null,	200);
     public static final Dish REST1_DISH3 = new Dish(100008,"Самса с курицей", null,	150);
     public static final Dish REST1_DISH4 = new Dish(100009,	"Чай", null,	90);
+    public static final Dish REST1_OLD_DISH = new Dish(100018, "Блюдо с другой датой", null, 10, LocalDate.of(2015, 1, 1));
 
     public static final Dish REST2_DISH1 = new Dish(100010,	"Бефстроганов", null,	230);
     public static final Dish REST2_DISH2 = new Dish(100011,	"Колбасные обрезки", null,	500);
@@ -39,6 +41,7 @@ public class DishTestData {
         REST1_DISHES.forEach(d -> d.setRestaurant(REST1));
         REST2_DISHES.forEach(d -> d.setRestaurant(REST2));
         REST3_DISHES.forEach(d -> d.setRestaurant(REST3));
+        REST1_OLD_DISH.setRestaurant(REST1);
     }
 
     public static Dish getNewDish() {

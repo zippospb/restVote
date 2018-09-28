@@ -3,6 +3,7 @@ package ru.zippospb.restvote.web.restaurant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import ru.zippospb.restvote.model.Dish;
 import ru.zippospb.restvote.repository.DishRepository;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 import static ru.zippospb.restvote.util.ValidationUtil.*;
@@ -70,5 +72,13 @@ public class AdminDishRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("restId") int restId, @PathVariable("dishId") int dishId){
         checkNotFoundWithId(repository.delete(dishId, restId), dishId);
+    }
+
+    @GetMapping("/by")
+    public List<Dish> getAllByDate(@PathVariable("restId") int restId,
+                                   @RequestParam("date")
+                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        log.info("getAll for restaurant {}", restId);
+        return repository.getAllByDate(restId, date);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.zippospb.restvote.model.Dish;
 import ru.zippospb.restvote.repository.DishRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -23,6 +24,11 @@ public class DataJpaDishRepositoryImpl implements DishRepository {
 
     public List<Dish> getAll(int restId){
         return repository.getAllByRestaurant(restId);
+    }
+
+    @Override
+    public List<Dish> getAllByDate(int restId, LocalDate date){
+        return repository.getAllByRestaurantIdAndDate(restId, date);
     }
 
     @Transactional

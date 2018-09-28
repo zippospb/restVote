@@ -7,6 +7,8 @@ import ru.zippospb.restvote.TestUtil;
 import ru.zippospb.restvote.repository.DishRepository;
 import ru.zippospb.restvote.web.AbstractControllerTest;
 
+import java.time.LocalDate;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -31,7 +33,7 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TestUtil.contentJson(REST1_DISHES));
+                .andExpect(TestUtil.contentJson(REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4, REST1_OLD_DISH));
     }
 
     @Test
@@ -59,6 +61,16 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(repository.getAll(REST1_ID), REST1_DISH2, REST1_DISH3, REST1_DISH4);
+        assertMatch(repository.getAll(REST1_ID), REST1_DISH2, REST1_DISH3, REST1_DISH4, REST1_OLD_DISH);
+    }
+
+    @Test
+    void testGetAllByDate() throws Exception {
+        mockMvc.perform(get(REST1_REST_URL + "by?date=" + LocalDate.now().toString())
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(TestUtil.contentJson(REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4));
     }
 }

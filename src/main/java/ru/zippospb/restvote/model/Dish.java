@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 
 //TODO возможно сделаю историю меню ресторанов
@@ -16,6 +17,7 @@ public class Dish extends AbstractNamedEntity {
 
     @NotNull
     @Range(min = 10)
+    @Column(name = "price", nullable = false)
     private Integer price;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,6 +25,9 @@ public class Dish extends AbstractNamedEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     private Restaurant restaurant;
+
+    @Column(name = "date")
+    LocalDate date = LocalDate.now();
 
     public Dish() {}
 
@@ -34,6 +39,13 @@ public class Dish extends AbstractNamedEntity {
         super(id, name);
         this.restaurant = restaurant;
         this.price = price;
+    }
+
+    public Dish(Integer id, String name, Restaurant restaurant, Integer price, LocalDate date) {
+        super(id, name);
+        this.restaurant = restaurant;
+        this.price = price;
+        this.date = date;
     }
 
     public int getPrice() {
@@ -57,6 +69,7 @@ public class Dish extends AbstractNamedEntity {
         return "Dish{" +
                 super.toString() +
                 ", price=" + price +
+                ", date=" + date +
                 ", restaurant=" + restaurant.getId() +
                 "} ";
     }

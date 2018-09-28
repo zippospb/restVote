@@ -1,6 +1,7 @@
 package ru.zippospb.restvote.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -13,6 +14,7 @@ public class Restaurant extends AbstractNamedEntity {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id")
     @OrderBy("name ASC")
+    @Where(clause = "date=CURRENT_DATE")
     @JsonManagedReference
     private List<Dish> dishes;
 
