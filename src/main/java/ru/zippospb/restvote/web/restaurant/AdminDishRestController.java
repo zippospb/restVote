@@ -7,11 +7,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.zippospb.restvote.model.Dish;
+import ru.zippospb.restvote.model.Restaurant;
 import ru.zippospb.restvote.repository.DishRepository;
+import ru.zippospb.restvote.repository.RestaurantRepository;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,53 +29,66 @@ public class AdminDishRestController {
 
     final static String REST_URL = "/rest/admin/restaurants/{restId}/dishes";
 
-    private final DishRepository repository;
+    private final DishRepository dishRepository;
+
+    private final RestaurantRepository restRepository;
 
     @Autowired
-    public AdminDishRestController(DishRepository repository) {
-        this.repository = repository;
+    public AdminDishRestController(DishRepository dishRepository, RestaurantRepository restRepository) {
+        this.dishRepository = dishRepository;
+        this.restRepository = restRepository;
     }
 
     @GetMapping
     public List<Dish> getAll(@PathVariable("restId") int restId){
         log.info("getAll for restaurant {}", restId);
-        return repository.getAll(restId);
+        return dishRepository.getAll(restId);
     }
 
     @GetMapping("/{dishId}")
     public Dish get(@PathVariable("restId") int restId, @PathVariable("dishId") int dishId){
         log.info("get {} for restaurant {}", dishId, restId);
-        return checkNotFoundWithId(repository.get(restId, dishId), dishId);
+        return checkNotFoundWithId(dishRepository.get(restId, dishId), dishId);
     }
 
     @PostMapping
-    public ResponseEntity<Dish> createWithLocation(@PathVariable("restId") int restId, @RequestBody Dish dish){
+    @Transactional
+    public ResponseEntity<Dish> createWithLocation(@PathVariable("restId") int restId,
+                                                   @Valid @RequestBody Dish dish){
         log.info("create {} for restaurant {}");
         checkNew(dish);
-        Dish created = repository.save(dish);
+        Restaurant restaurant = checkNotFoundWithId(restRepository.get(restId), restId);
+        dish.setRestaurant(restaurant);
+
+        Dish created = dishRepository.save(dish);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId())
+                .buildAndExpand(restId, created.getId())
                 .toUri();
 
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @PutMapping("/{dishId}")
+    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable("restId") int id, @PathVariable("dishId") int dishId,
-                       @RequestBody Dish dish){
+    public void update(@PathVariable("restId") int restId,
+                       @PathVariable("dishId") int dishId,
+                       @Valid @RequestBody Dish dish){
         log.info("update {} for restaurant {}", dish, dishId);
 
         assureIdConsistent(dish, dishId);
-        checkNotFoundWithId(repository.save(dish), dishId);
+        Restaurant restaurant = checkNotFoundWithId(restRepository.get(restId), restId);
+        dish.setRestaurant(restaurant);
+
+        checkNotFoundWithId(dishRepository.save(dish), dishId);
     }
 
     @DeleteMapping("{dishId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("restId") int restId, @PathVariable("dishId") int dishId){
-        checkNotFoundWithId(repository.delete(dishId, restId), dishId);
+        checkNotFoundWithId(dishRepository.delete(dishId, restId), dishId);
     }
 
     @GetMapping("/by")
@@ -79,6 +96,6 @@ public class AdminDishRestController {
                                    @RequestParam("date")
                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
         log.info("getAll for restaurant {}", restId);
-        return repository.getAllByDate(restId, date);
+        return dishRepository.getAllByDate(restId, date);
     }
 }

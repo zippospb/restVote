@@ -53,7 +53,6 @@ public class DishTestData {
 
     public static void assertMatch(Dish actual, Dish expected) {
         assertThat(actual).isEqualToIgnoringGivenFields(expected,"restaurant");
-        assertThat(actual.getRestaurant().getId()).isEqualTo(expected.getRestaurant().getId());
     }
 
     public static void assertMatch(Iterable<Dish> actual, Dish... expected) {

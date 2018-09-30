@@ -3,19 +3,24 @@ package ru.zippospb.restvote.web.restaurant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 import ru.zippospb.restvote.TestUtil;
+import ru.zippospb.restvote.model.Dish;
 import ru.zippospb.restvote.repository.DishRepository;
+import ru.zippospb.restvote.repository.RestaurantRepository;
+import ru.zippospb.restvote.util.exception.ErrorType;
 import ru.zippospb.restvote.web.AbstractControllerTest;
+import ru.zippospb.restvote.web.json.JsonUtil;
 
 import java.time.LocalDate;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.zippospb.restvote.DishTestData.*;
 import static ru.zippospb.restvote.RestaurantTestData.REST1_ID;
+import static ru.zippospb.restvote.TestUtil.readFromJson;
 import static ru.zippospb.restvote.TestUtil.userHttpBasic;
 import static ru.zippospb.restvote.UserTestData.ADMIN;
 import static ru.zippospb.restvote.web.restaurant.AdminDishRestController.REST_URL;
@@ -26,6 +31,9 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
     @Autowired
     private DishRepository repository;
 
+    @Autowired
+    private RestaurantRepository restRepository;
+
     @Test
     void testGetAll() throws Exception {
         mockMvc.perform(get(REST1_REST_URL)
@@ -34,6 +42,16 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TestUtil.contentJson(REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4, REST1_OLD_DISH));
+    }
+
+    @Test
+    void testGetAllByDate() throws Exception {
+        mockMvc.perform(get(REST1_REST_URL + "by?date=" + LocalDate.now().toString())
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(TestUtil.contentJson(REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4));
     }
 
     @Test
@@ -47,11 +65,12 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void testCreateWithLocation() {
-    }
-
-    @Test
-    void testUpdate() {
+    void testGetNotFound() throws Exception {
+        mockMvc.perform(get(REST1_REST_URL + 1)
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(ErrorType.DATA_NOT_FOUND));
     }
 
     @Test
@@ -65,12 +84,74 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void testGetAllByDate() throws Exception {
-        mockMvc.perform(get(REST1_REST_URL + "by?date=" + LocalDate.now().toString())
+    void testDeleteNotFound() throws Exception {
+        mockMvc.perform(delete(REST1_REST_URL + 1)
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TestUtil.contentJson(REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4));
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(ErrorType.DATA_NOT_FOUND));
+    }
+
+    @Test
+    void testCreate() throws Exception {
+        Dish expected = getNewDish();
+
+        ResultActions action = mockMvc.perform(post(REST1_REST_URL)
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(expected)))
+                .andDo(print())
+                .andExpect(status().isCreated());
+
+        Dish returned = readFromJson(action, Dish.class);
+        expected.setId(returned.getId());
+
+        assertMatch(returned, expected);
+        assertMatch(repository.getAllByDate(REST1_ID, LocalDate.now()),
+                REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4, expected);
+    }
+
+    @Test
+    void testCreateInvalid() throws Exception {
+        Dish expected = getNewDish();
+        expected.setName("");
+        expected.setPrice(5);
+
+        mockMvc.perform(post(REST1_REST_URL)
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(expected)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR));
+    }
+
+    @Test
+    void testUpdate() throws Exception {
+        Dish updated = new Dish(REST1_DISH1);
+        updated.setName("новая еда");
+
+        mockMvc.perform(put(REST1_REST_URL + REST1_DISH1_ID)
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertMatch(repository.get(REST1_ID, REST1_DISH1_ID), updated);
+    }
+
+    @Test
+    void testUpdateInvalid() throws Exception {
+        Dish updated = new Dish(REST1_DISH1);
+        updated.setName("");
+
+        mockMvc.perform(put(REST1_REST_URL + REST1_DISH1_ID)
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR));
     }
 }

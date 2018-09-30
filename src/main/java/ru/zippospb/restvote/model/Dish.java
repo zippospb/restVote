@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 
-//TODO возможно сделаю историю меню ресторанов
 @Entity
 @Table(name = "dishes")
 public class Dish extends AbstractNamedEntity {
@@ -20,14 +19,15 @@ public class Dish extends AbstractNamedEntity {
     @Column(name = "price", nullable = false)
     private Integer price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //TODO надо его убрать - возможно оставить только ID
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     private Restaurant restaurant;
 
     @Column(name = "date")
-    LocalDate date = LocalDate.now();
+    private LocalDate date = LocalDate.now();
 
     public Dish() {}
 
@@ -46,6 +46,10 @@ public class Dish extends AbstractNamedEntity {
         this.restaurant = restaurant;
         this.price = price;
         this.date = date;
+    }
+
+    public Dish(Dish dish) {
+        this(dish.id, dish.name, dish.restaurant, dish.price, dish.date);
     }
 
     public int getPrice() {
@@ -70,7 +74,6 @@ public class Dish extends AbstractNamedEntity {
                 super.toString() +
                 ", price=" + price +
                 ", date=" + date +
-                ", restaurant=" + restaurant.getId() +
                 "} ";
     }
 }

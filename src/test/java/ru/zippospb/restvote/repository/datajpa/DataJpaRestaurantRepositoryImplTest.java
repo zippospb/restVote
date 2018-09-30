@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.zippospb.restvote.model.Restaurant;
 import ru.zippospb.restvote.repository.AbstractRepositoryTest;
 import ru.zippospb.restvote.repository.RestaurantRepository;
+import ru.zippospb.restvote.util.ValidationUtil;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.zippospb.restvote.RestaurantTestData.*;
 
 class DataJpaRestaurantRepositoryImplTest extends AbstractRepositoryTest {
@@ -35,6 +38,19 @@ class DataJpaRestaurantRepositoryImplTest extends AbstractRepositoryTest {
     }
 
     @Test
+    void testCreateInvalid() {
+        Restaurant newRest = getNew();
+        newRest.setName("");
+        assertThrows(ConstraintViolationException.class, () -> {
+            try {
+                repository.save(newRest);
+            } catch (Exception e) {
+                throw ValidationUtil.getRootCause(e);
+            }
+        });
+    }
+
+    @Test
     void testUpdate() {
         Restaurant updated = new Restaurant(REST1);
         updated.setName("новый ресторан");
@@ -43,6 +59,21 @@ class DataJpaRestaurantRepositoryImplTest extends AbstractRepositoryTest {
     }
 
     @Test
+    void testUpdateInvalid() {
+        Restaurant updated = new Restaurant(REST1);
+        updated.setName("");
+        assertThrows(ConstraintViolationException.class, () -> {
+            try {
+                repository.save(updated);
+            } catch (Exception e) {
+                throw ValidationUtil.getRootCause(e);
+            }
+        });
+    }
+
+    @Test
     void testDelete() {
+        repository.delete(REST1_ID);
+        assertMatch(repository.getAll(), REST2, REST3);
     }
 }

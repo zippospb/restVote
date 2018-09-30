@@ -1,9 +1,11 @@
 package ru.zippospb.restvote.util.exception;
 
-import javax.validation.constraints.NotNull;
+import org.springframework.http.HttpStatus;
 
-public class NotFoundException extends RuntimeException {
-    public NotFoundException(@NotNull String message) {
-        super(message);
+public class NotFoundException extends ApplicationException {
+    public static final String NOT_FOUND_EXCEPTION = "Not found entity with {0}";
+
+    public NotFoundException(String arg) {
+        super(ErrorType.DATA_NOT_FOUND, NOT_FOUND_EXCEPTION, HttpStatus.UNPROCESSABLE_ENTITY, arg);
     }
 }

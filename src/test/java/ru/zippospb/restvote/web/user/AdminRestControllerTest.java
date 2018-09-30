@@ -4,8 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import ru.zippospb.restvote.model.Role;
 import ru.zippospb.restvote.model.User;
 import ru.zippospb.restvote.repository.UserRepository;
+import ru.zippospb.restvote.util.exception.ErrorType;
 import ru.zippospb.restvote.web.AbstractControllerTest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -52,7 +56,35 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void testCreateWithLocation() throws Exception {
+    void testGetByMail() throws Exception {
+        mockMvc.perform(get(REST_URL + "by?email=" + ADMIN_EMAIL)
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(contentJson(ADMIN));
+    }
+
+    @Test
+    void testDelete() throws Exception {
+        mockMvc.perform(delete(REST_URL + USER1_ID)
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertMatch(repository.getAll(), USER2, ADMIN);
+    }
+
+    @Test
+    void testDeleteNoFound() throws Exception {
+        mockMvc.perform(delete(REST_URL + 1)
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void testCreate() throws Exception {
         User expected = getNew();
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -69,13 +101,57 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void testDelete() throws Exception {
-        mockMvc.perform(delete(REST_URL + USER1_ID)
+    void testCreateInvalid() throws Exception {
+        User created = new User(null, null, "", "newPass", Role.ROLE_USER);
+        mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonWithPassword(created, created.getPassword()))
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR));
+    }
 
-        assertMatch(repository.getAll(), USER2, ADMIN);
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void testCreateDuplicate() throws Exception {
+        User created = new User(null, "userWithDuplicate", USER1.getEmail(), "newPass", Role.ROLE_USER);
+        mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonWithPassword(created, created.getPassword()))
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR));
+    }
+
+    @Test
+    void testUpdateInvalid() throws Exception {
+        User updated = new User(USER1);
+        updated.setName("");
+
+        mockMvc.perform(put(REST_URL + USER1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonWithPassword(updated, updated.getPassword()))
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void testUpdateDuplicate() throws Exception {
+        User updated = new User(USER1);
+        updated.setEmail(USER2.getEmail());
+
+        mockMvc.perform(put(REST_URL + USER1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonWithPassword(updated, updated.getPassword()))
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR));
     }
 
     @Test
@@ -93,15 +169,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
         assertMatch(repository.getAll(), updated, USER2, ADMIN);
     }
 
-    @Test
-    void testGetByMail() throws Exception {
-        mockMvc.perform(get(REST_URL + "by?email=" + ADMIN_EMAIL)
-                .with(userHttpBasic(ADMIN)))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(ADMIN));
-    }
+
 
     @Test
     void testGetUnAuth() throws Exception {

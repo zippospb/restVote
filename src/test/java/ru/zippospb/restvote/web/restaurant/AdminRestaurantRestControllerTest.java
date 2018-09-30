@@ -7,6 +7,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import ru.zippospb.restvote.TestUtil;
 import ru.zippospb.restvote.model.Restaurant;
 import ru.zippospb.restvote.repository.RestaurantRepository;
+import ru.zippospb.restvote.util.exception.ErrorType;
 import ru.zippospb.restvote.web.AbstractControllerTest;
 import ru.zippospb.restvote.web.json.JsonUtil;
 
@@ -24,7 +25,6 @@ import static ru.zippospb.restvote.UserTestData.ADMIN;
 class AdminRestaurantRestControllerTest extends AbstractControllerTest {
 
     private final static String REST_URL = AdminRestaurantRestController.REST_URL + "/";
-
 
     @Autowired
     private RestaurantRepository repository;
@@ -50,7 +50,35 @@ class AdminRestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void testCreateWithLocation() throws Exception {
+    void testGetNotFound() throws Exception {
+        mockMvc.perform(get(REST_URL + 1)
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(ErrorType.DATA_NOT_FOUND));
+    }
+
+    @Test
+    void testDelete() throws Exception {
+        mockMvc.perform(delete(REST_URL + REST1_ID)
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertMatch(repository.getAll(), REST2, REST3);
+    }
+
+    @Test
+    void testDeleteNotFound() throws Exception {
+        mockMvc.perform(delete(REST_URL + 1)
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(ErrorType.DATA_NOT_FOUND));
+    }
+
+    @Test
+    void testCreate() throws Exception {
         Restaurant expected = getNew();
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .with(userHttpBasic(ADMIN))
@@ -64,6 +92,19 @@ class AdminRestaurantRestControllerTest extends AbstractControllerTest {
 
         assertMatch(returned, expected);
         assertMatch(repository.getAll(), REST1, REST2, REST3, expected);
+    }
+
+    @Test
+    void testCreateInvalid() throws Exception {
+        Restaurant expected = getNew();
+        expected.setName("");
+        ResultActions action = mockMvc.perform(post(REST_URL)
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(expected)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR));
     }
 
     @Test
@@ -83,13 +124,18 @@ class AdminRestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void testDelete() throws Exception {
-        mockMvc.perform(delete(REST_URL + REST1_ID)
-                .with(userHttpBasic(ADMIN)))
-                .andDo(print())
-                .andExpect(status().isNoContent());
+    void testUpdateInvalid() throws Exception {
+        Restaurant updated = new Restaurant(REST1);
+        updated.setName("");
+//        updated.getDishes().remove(0);
 
-        assertMatch(repository.getAll(), REST2, REST3);
+        mockMvc.perform(put(REST_URL + REST1_ID)
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR));
     }
 
     @Test
