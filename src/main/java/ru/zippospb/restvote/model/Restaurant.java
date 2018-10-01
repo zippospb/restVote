@@ -1,6 +1,5 @@
 package ru.zippospb.restvote.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
 
@@ -16,7 +15,6 @@ public class Restaurant extends AbstractNamedEntity {
     @JoinColumn(name = "restaurant_id")
     @OrderBy("name ASC")
     @Where(clause = "date=CURRENT_DATE")
-    @JsonManagedReference
     private List<Dish> dishes;
 
     @Formula("(SELECT COUNT(v.restaurant_id) FROM votes v WHERE v.restaurant_id=id AND v.date=CURRENT_DATE GROUP BY v.restaurant_id)")
@@ -32,7 +30,7 @@ public class Restaurant extends AbstractNamedEntity {
     public Restaurant(Restaurant rest) {
         this(rest.id, rest.name);
         dishes = rest.dishes.stream()
-                .map(d -> new Dish(d, this))
+                .map(d -> new Dish(d, id))
                 .collect(Collectors.toList());
     }
 

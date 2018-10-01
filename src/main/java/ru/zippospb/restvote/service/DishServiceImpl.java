@@ -21,7 +21,7 @@ public class DishServiceImpl implements DishService {
     }
 
     public List<Dish> getAll(int restId){
-        return repository.getAllByRestaurant(restId);
+        return repository.getAllByRestaurantId(restId);
     }
 
     @Override

@@ -13,21 +13,21 @@ import static ru.zippospb.restvote.model.AbstractBaseEntity.START_SEQ;
 public class DishTestData {
     public static final int REST1_DISH1_ID = START_SEQ + 6;
 
-    public static final Dish REST1_DISH1 = new Dish(100006,"Булочки с повидлом", null, 50);
-    public static final Dish REST1_DISH2 = new Dish(100007,	"Салат от шеф-повара", null,	200);
-    public static final Dish REST1_DISH3 = new Dish(100008,"Самса с курицей", null,	150);
-    public static final Dish REST1_DISH4 = new Dish(100009,	"Чай", null,	90);
-    public static final Dish REST1_OLD_DISH = new Dish(100018, "Блюдо с другой датой", null, 10, LocalDate.of(2015, 1, 1));
+    public static final Dish REST1_DISH1 = new Dish(100006,"Булочки с повидлом", REST1_ID, 50);
+    public static final Dish REST1_DISH2 = new Dish(100007,	"Салат от шеф-повара", REST1_ID,	200);
+    public static final Dish REST1_DISH3 = new Dish(100008,"Самса с курицей", REST1_ID,	150);
+    public static final Dish REST1_DISH4 = new Dish(100009,	"Чай", REST1_ID,	90);
+    public static final Dish REST1_OLD_DISH = new Dish(100018, "Блюдо с другой датой", REST1_ID, 10, LocalDate.of(2015, 1, 1));
 
-    public static final Dish REST2_DISH1 = new Dish(100010,	"Бефстроганов", null,	230);
-    public static final Dish REST2_DISH2 = new Dish(100011,	"Колбасные обрезки", null,	500);
-    public static final Dish REST2_DISH3 = new Dish(100012,"Компот", null,	50);
-    public static final Dish REST2_DISH4 = new Dish(100013,	"Макарошки", null,	300);
-    public static final Dish REST2_DISH5 = new Dish(100014,	"Рататуй", null,	195);
+    public static final Dish REST2_DISH1 = new Dish(100010,	"Бефстроганов", REST1_ID + 1,	230);
+    public static final Dish REST2_DISH2 = new Dish(100011,	"Колбасные обрезки", REST1_ID + 1,	500);
+    public static final Dish REST2_DISH3 = new Dish(100012,"Компот", REST1_ID + 1,	50);
+    public static final Dish REST2_DISH4 = new Dish(100013,	"Макарошки", REST1_ID + 1,	300);
+    public static final Dish REST2_DISH5 = new Dish(100014,	"Рататуй", REST1_ID + 1,	195);
 
-    public static final Dish REST3_DISH1 = new Dish(100015, "BigMag", null,	300);
-    public static final Dish REST3_DISH2 = new Dish(100016, "Coca Cola", null,	150);
-    public static final Dish REST3_DISH3 = new Dish(100017, "Free", null,	120);
+    public static final Dish REST3_DISH1 = new Dish(100015, "BigMag", REST1_ID + 2,	300);
+    public static final Dish REST3_DISH2 = new Dish(100016, "Coca Cola", REST1_ID + 2,	150);
+    public static final Dish REST3_DISH3 = new Dish(100017, "Free", REST1_ID + 2,	120);
 
     public static final List<Dish> REST1_DISHES;
     public static final List<Dish> REST2_DISHES;
@@ -37,11 +37,6 @@ public class DishTestData {
         REST1_DISHES = Arrays.asList(REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4);
         REST2_DISHES = Arrays.asList(REST2_DISH1, REST2_DISH2, REST2_DISH3, REST2_DISH4, REST2_DISH5);
         REST3_DISHES = Arrays.asList(REST3_DISH1, REST3_DISH2, REST3_DISH3);
-
-        REST1_DISHES.forEach(d -> d.setRestaurant(REST1));
-        REST2_DISHES.forEach(d -> d.setRestaurant(REST2));
-        REST3_DISHES.forEach(d -> d.setRestaurant(REST3));
-        REST1_OLD_DISH.setRestaurant(REST1);
     }
 
     public static Dish getNewDish() {

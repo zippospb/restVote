@@ -105,6 +105,7 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
 
         Dish returned = readFromJson(action, Dish.class);
         expected.setId(returned.getId());
+        expected.setRestaurantId(returned.getRestaurantId());
 
         assertMatch(returned, expected);
         assertMatch(dishService.getAllByDate(REST1_ID, LocalDate.now()),

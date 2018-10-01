@@ -12,15 +12,15 @@ import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface CrudDishRepository extends JpaRepository<Dish, Integer> {
-    @Query("SELECT d FROM Dish d WHERE d.restaurant.id=?1")
-    List<Dish> getAllByRestaurant(int restId);
+    @Query("SELECT d FROM Dish d WHERE d.restaurantId=?1")
+    List<Dish> getAllByRestaurantId(int restId);
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM Dish d WHERE d.id=?1 AND d.restaurant.id=?2")
+    @Query("DELETE FROM Dish d WHERE d.id=?1 AND d.restaurantId=?2")
     int delete(int dishId, int restId);
 
-    @Query("SELECT d FROM Dish d WHERE d.restaurant.id=?1 AND d.id=?2")
+    @Query("SELECT d FROM Dish d WHERE d.restaurantId=?1 AND d.id=?2")
     Optional<Dish> getById(int restId, int dishId);
 
     List<Dish> getAllByRestaurantIdAndDate(int restId,LocalDate date);

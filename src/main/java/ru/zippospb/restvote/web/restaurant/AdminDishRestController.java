@@ -58,7 +58,7 @@ public class AdminDishRestController {
         log.info("create {} for restaurant {}");
         checkNew(dish);
         Restaurant restaurant = restService.get(restId);
-        dish.setRestaurant(restaurant);
+        dish.setRestaurantId(restaurant.getId());
 
         Dish created = dishService.create(dish);
 
@@ -80,7 +80,7 @@ public class AdminDishRestController {
 
         assureIdConsistent(dish, dishId);
         Restaurant restaurant = restService.get(restId);
-        dish.setRestaurant(restaurant);
+        dish.setRestaurantId(restaurant.getId());
 
         dishService.update(dish);
     }

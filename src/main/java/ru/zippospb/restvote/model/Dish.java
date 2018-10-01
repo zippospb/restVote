@@ -1,11 +1,11 @@
 package ru.zippospb.restvote.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Range;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -19,37 +19,35 @@ public class Dish extends AbstractNamedEntity {
     @Column(name = "price", nullable = false)
     private Integer price;
 
-    //TODO надо его убрать - возможно оставить только ID
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "restaurant_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonBackReference
-    private Restaurant restaurant;
+    @Column(name = "restaurant_id", nullable = false)
+    private Integer restaurantId;
 
     @Column(name = "date")
+    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDate date = LocalDate.now();
 
     public Dish() {}
 
-    Dish(Dish dish, Restaurant newRest) {
-        this(dish.id, dish.name, newRest, dish.price);
+    Dish(Dish dish, Integer restaurantId) {
+        this(dish.id, dish.name, restaurantId, dish.price);
     }
 
-    public Dish(Integer id, String name, Restaurant restaurant, Integer price) {
+    public Dish(Integer id, String name, Integer restaurantId, Integer price) {
         super(id, name);
-        this.restaurant = restaurant;
+        this.restaurantId = restaurantId;
         this.price = price;
     }
 
-    public Dish(Integer id, String name, Restaurant restaurant, Integer price, LocalDate date) {
+    public Dish(Integer id, String name, Integer restaurantId, Integer price, LocalDate date) {
         super(id, name);
-        this.restaurant = restaurant;
+        this.restaurantId = restaurantId;
         this.price = price;
         this.date = date;
     }
 
     public Dish(Dish dish) {
-        this(dish.id, dish.name, dish.restaurant, dish.price, dish.date);
+        this(dish.id, dish.name, dish.restaurantId, dish.price, dish.date);
     }
 
     public int getPrice() {
@@ -60,12 +58,12 @@ public class Dish extends AbstractNamedEntity {
         this.price = price;
     }
 
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
+    public void setRestaurantId(Integer restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
-    public Restaurant getRestaurant() {
-        return restaurant;
+    public Integer getRestaurantId() {
+        return restaurantId;
     }
 
     @Override

@@ -37,7 +37,7 @@ class DishServiceImplTest extends AbstractServiceTest {
     @Test
     void testSave() {
         Dish created = getNewDish();
-        created.setRestaurant(REST1);
+        created.setRestaurantId(REST1_ID);
         service.create(created);
         assertMatch(service.getAll(REST1_ID), REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4, REST1_OLD_DISH, created);
     }
@@ -60,8 +60,8 @@ class DishServiceImplTest extends AbstractServiceTest {
 
     @Test
     void testValidation() {
-        validateRootCause(() -> service.create(new Dish(null, "  ", REST1, 100)), ConstraintViolationException.class);
-        validateRootCause(() -> service.create(new Dish(null, "New Restaurant", REST1, null)), ConstraintViolationException.class);
-        validateRootCause(() -> service.create(new Dish(null, "New Restaurant", REST1, 9)), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Dish(null, "  ", REST1_ID, 100)), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Dish(null, "New Restaurant", REST1_ID, null)), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Dish(null, "New Restaurant", REST1_ID, 9)), ConstraintViolationException.class);
     }
 }
