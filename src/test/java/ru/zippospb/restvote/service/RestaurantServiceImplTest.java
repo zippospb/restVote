@@ -3,7 +3,7 @@ package ru.zippospb.restvote.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.zippospb.restvote.model.Restaurant;
-import ru.zippospb.restvote.util.ValidationUtil;
+import ru.zippospb.restvote.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.List;
@@ -28,24 +28,16 @@ class RestaurantServiceImplTest extends AbstractServiceTest {
     }
 
     @Test
+    void testGetNotFound() {
+        assertThrows(NotFoundException.class, () -> service.get(1));
+    }
+
+    @Test
     void testCreate() {
         Restaurant newRest = getNew();
         Restaurant created = service.create(getNew());
         newRest.setId(created.getId());
         assertMatch(service.getAll(), REST1, REST2, REST3, newRest);
-    }
-
-    @Test
-    void testCreateInvalid() {
-        Restaurant newRest = getNew();
-        newRest.setName("");
-        assertThrows(ConstraintViolationException.class, () -> {
-            try {
-                service.create(newRest);
-            } catch (Exception e) {
-                throw ValidationUtil.getRootCause(e);
-            }
-        });
     }
 
     @Test
@@ -57,21 +49,18 @@ class RestaurantServiceImplTest extends AbstractServiceTest {
     }
 
     @Test
-    void testUpdateInvalid() {
-        Restaurant updated = new Restaurant(REST1);
-        updated.setName("");
-        assertThrows(ConstraintViolationException.class, () -> {
-            try {
-                service.create(updated);
-            } catch (Exception e) {
-                throw ValidationUtil.getRootCause(e);
-            }
-        });
-    }
-
-    @Test
     void testDelete() {
         service.delete(REST1_ID);
         assertMatch(service.getAll(), REST2, REST3);
+    }
+
+    @Test
+    void testDeleteNotFound() {
+        assertThrows(NotFoundException.class, () -> service.delete(1));
+    }
+
+    @Test
+    void testValidation() {
+        validateRootCause(() -> service.create(new Restaurant(null, "  ")), ConstraintViolationException.class);
     }
 }

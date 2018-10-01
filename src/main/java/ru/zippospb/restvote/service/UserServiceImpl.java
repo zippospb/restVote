@@ -5,14 +5,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.zippospb.restvote.AuthorizedUser;
 import ru.zippospb.restvote.model.User;
 import ru.zippospb.restvote.repository.datajpa.CrudUserRepository;
+import ru.zippospb.restvote.to.UserTo;
 
 import java.util.List;
 
 import static ru.zippospb.restvote.util.UserUtil.prepareToSave;
+import static ru.zippospb.restvote.util.UserUtil.updateFromTo;
 import static ru.zippospb.restvote.util.ValidationUtil.checkNotFound;
 import static ru.zippospb.restvote.util.ValidationUtil.checkNotFoundWithId;
 
@@ -48,6 +51,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void update(User user) {
         Assert.notNull(user, "user must not be null");
         checkNotFoundWithId(repository.save(prepareToSave(user, passwordEncoder)), user.getId());
+    }
+
+    @Override
+    @Transactional
+    public void update(UserTo userTo) {
+        User user = updateFromTo(get(userTo.getId()), userTo);
+        repository.save(prepareToSave(user, passwordEncoder));
     }
 
     @Override

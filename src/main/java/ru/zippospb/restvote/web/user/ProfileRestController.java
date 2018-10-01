@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.zippospb.restvote.AuthorizedUser;
 import ru.zippospb.restvote.model.User;
-import ru.zippospb.restvote.web.security.SecurityUtil;
+import ru.zippospb.restvote.to.UserTo;
+import ru.zippospb.restvote.util.UserUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -31,8 +32,8 @@ public class ProfileRestController extends AbstractUserController{
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseEntity<User> register(@Valid @RequestBody User user) {
-        User created = super.create(user);
+    public ResponseEntity<User> register(@Valid @RequestBody UserTo userTo) {
+        User created = super.create(UserUtil.createNewFromTo(userTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
@@ -42,7 +43,7 @@ public class ProfileRestController extends AbstractUserController{
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody User user, @AuthenticationPrincipal AuthorizedUser authUser) {
-        super.update(user, authUser.getId());
+    public void update(@Valid @RequestBody UserTo userTo, @AuthenticationPrincipal AuthorizedUser authUser) {
+        super.update(userTo, authUser.getId());
     }
 }

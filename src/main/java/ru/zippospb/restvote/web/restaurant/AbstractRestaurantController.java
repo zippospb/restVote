@@ -11,13 +11,13 @@ import ru.zippospb.restvote.service.RestaurantService;
 import ru.zippospb.restvote.service.UserService;
 import ru.zippospb.restvote.service.VoteService;
 import ru.zippospb.restvote.util.exception.IllegalRequestDataException;
+import ru.zippospb.restvote.web.security.SecurityUtil;
 
 import java.time.LocalTime;
 import java.util.List;
 
 import static ru.zippospb.restvote.util.ValidationUtil.assureIdConsistent;
 import static ru.zippospb.restvote.util.ValidationUtil.checkNew;
-import static ru.zippospb.restvote.web.security.SecurityUtil.authUserId;
 import static ru.zippospb.restvote.web.security.SecurityUtil.saveGet;
 
 public abstract class AbstractRestaurantController {
@@ -70,7 +70,7 @@ public abstract class AbstractRestaurantController {
 
         if(vote == null){
             log.info("create vote by user {} for restaurant {}", user, restId);
-            vote = new Vote(userService.getReference(authUserId()), restService.getReference(restId));
+            vote = new Vote(SecurityUtil.get().getUser(), restService.get(restId));
         } else if (LocalTime.now().isBefore(END_TIME_OF_VOTE)){
             log.info("update vote by user {} for restaurant {}", user, restId);
             vote.setRestaurant(restService.getReference(restId));

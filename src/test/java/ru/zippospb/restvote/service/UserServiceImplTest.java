@@ -7,6 +7,7 @@ import org.springframework.dao.DataAccessException;
 import ru.zippospb.restvote.model.Role;
 import ru.zippospb.restvote.model.User;
 import ru.zippospb.restvote.util.ValidationUtil;
+import ru.zippospb.restvote.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Collections;
@@ -19,11 +20,6 @@ class UserServiceImplTest extends AbstractServiceTest {
 
     @Autowired
     private UserService service;
-
-    @BeforeEach
-    void setUp() {
-//        cacheManager.getCache("users").clear();
-    }
 
     @Test
     void testGetAll() {
@@ -38,9 +34,19 @@ class UserServiceImplTest extends AbstractServiceTest {
     }
 
     @Test
+    void getNotFound() {
+        assertThrows(NotFoundException.class, () -> service.get(1));
+    }
+
+    @Test
     void testGetByEmail() {
         User user = service.getByEmail("admin@gmail.com");
         assertMatch(user, ADMIN);
+    }
+
+    @Test
+    void deleteNotFound() {
+        assertThrows(NotFoundException.class, () -> service.delete(1));
     }
 
     @Test
@@ -55,18 +61,6 @@ class UserServiceImplTest extends AbstractServiceTest {
         User created = service.create(new User(newUser));
         newUser.setId(created.getId());
         assertMatch(service.getAll(), USER1, USER2, ADMIN, newUser);
-    }
-
-    @Test
-    void testCreateInvalid() {
-        final User newUser = new User(null, "", "new@gmail.com", "newPass", Role.ROLE_USER);
-        assertThrows(ConstraintViolationException.class, () -> {
-            try {
-                service.update(newUser);
-            } catch (Exception e) {
-                throw ValidationUtil.getRootCause(e);
-            }
-        });
     }
 
     @Test
@@ -102,6 +96,13 @@ class UserServiceImplTest extends AbstractServiceTest {
         User updated = new User(USER1);
         updated.setEmail(USER2.getEmail());
         assertThrows(DataAccessException.class, () -> service.update(updated));
+    }
+
+    @Test
+    void testValidation() {
+        validateRootCause(() -> service.create(new User(null, "  ", "invalid@yandex.ru", "password", Role.ROLE_USER)), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new User(null, "User", "  ", "password", Role.ROLE_USER)), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new User(null, "User", "invalid@yandex.ru", "", Role.ROLE_USER)), ConstraintViolationException.class);
     }
 
 //    @Test

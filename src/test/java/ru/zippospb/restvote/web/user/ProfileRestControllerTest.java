@@ -6,7 +6,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.zippospb.restvote.model.User;
 import ru.zippospb.restvote.service.UserService;
+import ru.zippospb.restvote.to.UserTo;
+import ru.zippospb.restvote.util.UserUtil;
 import ru.zippospb.restvote.web.AbstractControllerTest;
+import ru.zippospb.restvote.web.json.JsonUtil;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -43,15 +46,17 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testRegister() throws Exception {
-        User created = getNew();
+        UserTo createdTo = new UserTo(null, "new User", "new@yandex.ru", "zxcvb");
 
         ResultActions action = mockMvc.perform(post(REST_URL + "/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithPassword(created, created.getPassword())))
+                .content(JsonUtil.writeValue(createdTo)))
                 .andDo(print())
                 .andExpect(status().isCreated());
 
         User returned = readFromJson(action, User.class);
+
+        User created = UserUtil.createNewFromTo(createdTo);
         created.setId(returned.getId());
 
         assertMatch(returned, created);
@@ -60,17 +65,16 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testUpdate() throws Exception {
-        User updated = new User(USER1);
-        updated.setEmail("updated@gmail.com");
+        UserTo updated = new UserTo(null, "updated", "updated@gmail.com", "newPass");
 
         ResultActions action = mockMvc.perform(put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithPassword(updated, updated.getPassword()))
+                .content(JsonUtil.writeValue(updated))
                 .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(service.get(USER1_ID), updated);
+        assertMatch(service.getByEmail(updated.getEmail()), UserUtil.updateFromTo(USER1, updated));
     }
 
     @Test

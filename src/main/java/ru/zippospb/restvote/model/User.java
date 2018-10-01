@@ -1,6 +1,7 @@
 package ru.zippospb.restvote.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ public class User extends AbstractNamedEntity {
     @Email
     @NotBlank
     @Size(max = 100)
+    @SafeHtml
     private String email;
 
     @Column(name = "password", nullable = false)
@@ -29,9 +31,6 @@ public class User extends AbstractNamedEntity {
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
-
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-//    private List<Vote> votes;
 
     public User() {}
 
@@ -54,17 +53,9 @@ public class User extends AbstractNamedEntity {
         this.roles = CollectionUtils.isEmpty(roles) ? Collections.emptySet() : EnumSet.copyOf(roles);
     }
 
-//    public void setVotes(List<Vote> votes) {
-//        this.votes = votes;
-//    }
-
     public Set<Role> getRoles() {
         return roles;
     }
-
-//    public List<Vote> getVotes() {
-//        return votes;
-//    }
 
     public String getEmail() {
         return email;

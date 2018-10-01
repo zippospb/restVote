@@ -1,6 +1,7 @@
 package ru.zippospb.restvote.service;
 
 import ru.zippospb.restvote.model.User;
+import ru.zippospb.restvote.to.UserTo;
 
 import java.util.List;
 
@@ -12,6 +13,8 @@ public interface UserService {
     User create(User user);
 
     void update(User user);
+
+    void update(UserTo userTo);
 
     void delete(int id);
 
