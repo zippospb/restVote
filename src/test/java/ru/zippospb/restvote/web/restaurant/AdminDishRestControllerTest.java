@@ -6,8 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.zippospb.restvote.TestUtil;
 import ru.zippospb.restvote.model.Dish;
-import ru.zippospb.restvote.repository.DishRepository;
-import ru.zippospb.restvote.repository.RestaurantRepository;
+import ru.zippospb.restvote.service.DishService;
+import ru.zippospb.restvote.service.RestaurantService;
 import ru.zippospb.restvote.util.exception.ErrorType;
 import ru.zippospb.restvote.web.AbstractControllerTest;
 import ru.zippospb.restvote.web.json.JsonUtil;
@@ -29,10 +29,10 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
     private final static String REST1_REST_URL = REST_URL.replaceAll("\\{restId\\}", String.valueOf(REST1_ID)) + "/";
 
     @Autowired
-    private DishRepository repository;
+    private DishService dishService;
 
     @Autowired
-    private RestaurantRepository restRepository;
+    private RestaurantService restService;
 
     @Test
     void testGetAll() throws Exception {
@@ -80,7 +80,7 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(repository.getAll(REST1_ID), REST1_DISH2, REST1_DISH3, REST1_DISH4, REST1_OLD_DISH);
+        assertMatch(dishService.getAll(REST1_ID), REST1_DISH2, REST1_DISH3, REST1_DISH4, REST1_OLD_DISH);
     }
 
     @Test
@@ -107,7 +107,7 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
-        assertMatch(repository.getAllByDate(REST1_ID, LocalDate.now()),
+        assertMatch(dishService.getAllByDate(REST1_ID, LocalDate.now()),
                 REST1_DISH1, REST1_DISH2, REST1_DISH3, REST1_DISH4, expected);
     }
 
@@ -138,7 +138,7 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(repository.get(REST1_ID, REST1_DISH1_ID), updated);
+        assertMatch(dishService.get(REST1_ID, REST1_DISH1_ID), updated);
     }
 
     @Test

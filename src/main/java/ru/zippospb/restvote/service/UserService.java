@@ -1,17 +1,19 @@
-package ru.zippospb.restvote.repository;
+package ru.zippospb.restvote.service;
 
 import ru.zippospb.restvote.model.User;
 
 import java.util.List;
 
-public interface UserRepository {
+public interface UserService {
     List<User> getAll();
 
     User get(int id);
 
-    User save(User user);
+    User create(User user);
 
-    boolean delete(int id);
+    void update(User user);
+
+    void delete(int id);
 
     User getByEmail(String email);
 

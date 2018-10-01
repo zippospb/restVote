@@ -4,6 +4,8 @@ import ru.zippospb.restvote.HasId;
 import ru.zippospb.restvote.util.exception.IllegalRequestDataException;
 import ru.zippospb.restvote.util.exception.NotFoundException;
 
+import java.util.Optional;
+
 public class ValidationUtil {
     private ValidationUtil(){}
 
@@ -23,6 +25,16 @@ public class ValidationUtil {
 
     public static <T> T checkNotFoundWithId(T object, int id) {
         return checkNotFound(object, "id=" + id);
+    }
+
+    public static <T> T checkNotFoundWithId(Optional<T> optional, int id) {
+        checkNotFound(optional.isPresent(), "id=" + id);
+        return optional.get();
+    }
+
+    public static <T> T checkNotFoundWithId(Optional<T> optional, String msg) {
+        checkNotFound(optional.isPresent(), msg);
+        return optional.get();
     }
 
     public static <T> T checkNotFound(T object, String msg) {

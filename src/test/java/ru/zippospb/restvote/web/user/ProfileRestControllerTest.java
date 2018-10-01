@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.zippospb.restvote.model.User;
-import ru.zippospb.restvote.repository.UserRepository;
+import ru.zippospb.restvote.service.UserService;
 import ru.zippospb.restvote.web.AbstractControllerTest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -19,7 +19,7 @@ import static ru.zippospb.restvote.web.user.ProfileRestController.REST_URL;
 
 class ProfileRestControllerTest extends AbstractControllerTest {
     @Autowired
-    UserRepository repository;
+    UserService service;
 
     @Test
     void testGet() throws Exception {
@@ -38,7 +38,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(repository.getAll(), USER2, ADMIN);
+        assertMatch(service.getAll(), USER2, ADMIN);
     }
 
     @Test
@@ -55,7 +55,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         created.setId(returned.getId());
 
         assertMatch(returned, created);
-        assertMatch(repository.getByEmail(created.getEmail()), created);
+        assertMatch(service.getByEmail(created.getEmail()), created);
     }
 
     @Test
@@ -70,7 +70,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(repository.get(USER1_ID), updated);
+        assertMatch(service.get(USER1_ID), updated);
     }
 
     @Test

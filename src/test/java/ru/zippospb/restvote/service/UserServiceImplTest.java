@@ -1,4 +1,4 @@
-package ru.zippospb.restvote.repository.datajpa;
+package ru.zippospb.restvote.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import ru.zippospb.restvote.model.Role;
 import ru.zippospb.restvote.model.User;
-import ru.zippospb.restvote.repository.AbstractRepositoryTest;
-import ru.zippospb.restvote.repository.UserRepository;
 import ru.zippospb.restvote.util.ValidationUtil;
 
 import javax.validation.ConstraintViolationException;
@@ -17,10 +15,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.zippospb.restvote.UserTestData.*;
 
-class DataJpaUserRepositoryImplTest extends AbstractRepositoryTest {
+class UserServiceImplTest extends AbstractServiceTest {
 
     @Autowired
-    private UserRepository repository;
+    private UserService service;
 
     @BeforeEach
     void setUp() {
@@ -29,34 +27,34 @@ class DataJpaUserRepositoryImplTest extends AbstractRepositoryTest {
 
     @Test
     void testGetAll() {
-        List<User> all = repository.getAll();
+        List<User> all = service.getAll();
         assertMatch(all, USER1, USER2, ADMIN);
     }
 
     @Test
     void testGet() {
-        User user = repository.get(ADMIN_ID);
+        User user = service.get(ADMIN_ID);
         assertMatch(user, ADMIN);
     }
 
     @Test
     void testGetByEmail() {
-        User user = repository.getByEmail("admin@gmail.com");
+        User user = service.getByEmail("admin@gmail.com");
         assertMatch(user, ADMIN);
     }
 
     @Test
     void testDelete() {
-        repository.delete(USER1_ID);
-        assertMatch(repository.getAll(), USER2, ADMIN);
+        service.delete(USER1_ID);
+        assertMatch(service.getAll(), USER2, ADMIN);
     }
 
     @Test
     void testCreate() {
         User newUser = new User(null, "New", "new@gmail.com", "newPass", Role.ROLE_USER);
-        User created = repository.save(new User(newUser));
+        User created = service.create(new User(newUser));
         newUser.setId(created.getId());
-        assertMatch(repository.getAll(), USER1, USER2, ADMIN, newUser);
+        assertMatch(service.getAll(), USER1, USER2, ADMIN, newUser);
     }
 
     @Test
@@ -64,7 +62,7 @@ class DataJpaUserRepositoryImplTest extends AbstractRepositoryTest {
         final User newUser = new User(null, "", "new@gmail.com", "newPass", Role.ROLE_USER);
         assertThrows(ConstraintViolationException.class, () -> {
             try {
-                repository.save(newUser);
+                service.update(newUser);
             } catch (Exception e) {
                 throw ValidationUtil.getRootCause(e);
             }
@@ -74,7 +72,7 @@ class DataJpaUserRepositoryImplTest extends AbstractRepositoryTest {
     @Test
     void testCreateDuplicate() {
         assertThrows(DataAccessException.class, () ->
-                repository.save(new User(null, "Duplicate", USER1.getEmail(), "newPass", Role.ROLE_USER)));
+                service.update(new User(null, "Duplicate", USER1.getEmail(), "newPass", Role.ROLE_USER)));
     }
 
     @Test
@@ -82,8 +80,8 @@ class DataJpaUserRepositoryImplTest extends AbstractRepositoryTest {
         User updated = new User(USER1);
         updated.setName("UpdatedName");
         updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
-        repository.save(new User(updated));
-        assertMatch(repository.get(USER1_ID), updated);
+        service.update(new User(updated));
+        assertMatch(service.get(USER1_ID), updated);
     }
 
     @Test
@@ -92,7 +90,7 @@ class DataJpaUserRepositoryImplTest extends AbstractRepositoryTest {
         updated.setName("");
         assertThrows(ConstraintViolationException.class, () -> {
             try {
-                repository.save(updated);
+                service.update(updated);
             } catch (Exception e) {
                 throw ValidationUtil.getRootCause(e);
             }
@@ -103,14 +101,14 @@ class DataJpaUserRepositoryImplTest extends AbstractRepositoryTest {
     void testUpdateDuplicate() {
         User updated = new User(USER1);
         updated.setEmail(USER2.getEmail());
-        assertThrows(DataAccessException.class, () -> repository.save(updated));
+        assertThrows(DataAccessException.class, () -> service.update(updated));
     }
 
 //    @Test
 //    void enable() {
-//        repository.enable(USER_ID, false);
-//        assertFalse(repository.get(USER_ID).isEnabled());
-//        repository.enable(USER_ID, true);
-//        assertTrue(repository.get(USER_ID).isEnabled());
+//        service.enable(USER_ID, false);
+//        assertFalse(service.getUserVote(USER_ID).isEnabled());
+//        service.enable(USER_ID, true);
+//        assertTrue(service.getUserVote(USER_ID).isEnabled());
 //    }
 }

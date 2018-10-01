@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.zippospb.restvote.TestUtil;
 import ru.zippospb.restvote.model.Restaurant;
-import ru.zippospb.restvote.repository.RestaurantRepository;
+import ru.zippospb.restvote.service.RestaurantService;
 import ru.zippospb.restvote.util.exception.ErrorType;
 import ru.zippospb.restvote.web.AbstractControllerTest;
 import ru.zippospb.restvote.web.json.JsonUtil;
@@ -27,7 +27,7 @@ class AdminRestaurantRestControllerTest extends AbstractControllerTest {
     private final static String REST_URL = AdminRestaurantRestController.REST_URL + "/";
 
     @Autowired
-    private RestaurantRepository repository;
+    private RestaurantService service;
 
     @Test
     void testGetAll() throws Exception {
@@ -65,7 +65,7 @@ class AdminRestaurantRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(repository.getAll(), REST2, REST3);
+        assertMatch(service.getAll(), REST2, REST3);
     }
 
     @Test
@@ -91,7 +91,7 @@ class AdminRestaurantRestControllerTest extends AbstractControllerTest {
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
-        assertMatch(repository.getAll(), REST1, REST2, REST3, expected);
+        assertMatch(service.getAll(), REST1, REST2, REST3, expected);
     }
 
     @Test
@@ -120,7 +120,7 @@ class AdminRestaurantRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(repository.get(updated.getId()), updated);
+        assertMatch(service.get(updated.getId()), updated);
     }
 
     @Test

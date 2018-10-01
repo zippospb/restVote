@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.zippospb.restvote.model.Role;
 import ru.zippospb.restvote.model.User;
-import ru.zippospb.restvote.repository.UserRepository;
+import ru.zippospb.restvote.service.UserService;
 import ru.zippospb.restvote.util.exception.ErrorType;
 import ru.zippospb.restvote.web.AbstractControllerTest;
 
@@ -25,7 +25,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
     private final static String REST_URL = AdminRestController.REST_URL + "/";
 
     @Autowired
-    private UserRepository repository;
+    private UserService service;
 
     @Test
     void testGetAll() throws Exception {
@@ -72,7 +72,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(repository.getAll(), USER2, ADMIN);
+        assertMatch(service.getAll(), USER2, ADMIN);
     }
 
     @Test
@@ -97,7 +97,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
-        assertMatch(repository.getAll(), USER1, USER2, ADMIN, expected);
+        assertMatch(service.getAll(), USER1, USER2, ADMIN, expected);
     }
 
     @Test
@@ -166,7 +166,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(repository.getAll(), updated, USER2, ADMIN);
+        assertMatch(service.getAll(), updated, USER2, ADMIN);
     }
 
 

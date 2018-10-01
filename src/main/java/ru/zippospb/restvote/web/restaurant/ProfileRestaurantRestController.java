@@ -29,7 +29,7 @@ public class ProfileRestaurantRestController extends  AbstractRestaurantControll
         return super.get(id);
     }
 
-    @PostMapping("/{id}/votes")
+    @GetMapping("/{id}/votes")
     @Transactional
     public ResponseEntity<Vote> voting(@PathVariable("id") int id){
         Vote created = super.vote(id);

@@ -4,19 +4,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import ru.zippospb.restvote.AuthorizedUser;
 import ru.zippospb.restvote.model.Restaurant;
 import ru.zippospb.restvote.model.Vote;
-import ru.zippospb.restvote.repository.RestaurantRepository;
-import ru.zippospb.restvote.repository.UserRepository;
-import ru.zippospb.restvote.repository.VoteRepository;
+import ru.zippospb.restvote.service.RestaurantService;
+import ru.zippospb.restvote.service.UserService;
+import ru.zippospb.restvote.service.VoteService;
 import ru.zippospb.restvote.util.exception.IllegalRequestDataException;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.zippospb.restvote.util.ValidationUtil.*;
+import static ru.zippospb.restvote.util.ValidationUtil.assureIdConsistent;
+import static ru.zippospb.restvote.util.ValidationUtil.checkNew;
 import static ru.zippospb.restvote.web.security.SecurityUtil.authUserId;
+import static ru.zippospb.restvote.web.security.SecurityUtil.saveGet;
 
 public abstract class AbstractRestaurantController {
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -24,57 +26,58 @@ public abstract class AbstractRestaurantController {
     private final LocalTime END_TIME_OF_VOTE = LocalTime.of(11, 0, 0);
 
     @Autowired
-    private RestaurantRepository restRepository;
+    private RestaurantService restService;
 
     @Autowired
-    private VoteRepository voteRepository;
+    private VoteService voteService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     List<Restaurant> getAll(){
         log.info("getAll");
-        return restRepository.getAll();
+        return restService.getAll();
     }
 
     //TODO возможно лучше будет сделать ТО с добавлением поля "Количество голосов"
     Restaurant get(int id){
-        log.info("get {}", id);
-        return checkNotFoundWithId(restRepository.get(id), id);
+        log.info("getUserVote {}", id);
+        return restService.get(id);
     }
 
     Restaurant create(Restaurant restaurant){
         log.info("create {}", restaurant);
         checkNew(restaurant);
-        return restRepository.save(restaurant);
+        return restService.create(restaurant);
     }
 
     void update(Restaurant restaurant,int id) {
         log.info("update {} with id {}", restaurant, id);
         assureIdConsistent(restaurant, id);
-        checkNotFoundWithId(restRepository.save(restaurant), restaurant.getId());
+        restService.update(restaurant);
     }
 
     void delete(int id) {
         log.info("delete {}", id);
-        checkNotFoundWithId(restRepository.delete(id), id);
+        restService.delete(id);
     }
 
     @Transactional
     Vote vote(int restId) {
-        int userId = authUserId();
-        Vote vote = voteRepository.get(userId, LocalDate.now());
+        AuthorizedUser user = saveGet();
+        assert user != null;
+        Vote vote = voteService.getUserVote(user.getId());
 
         if(vote == null){
-            log.info("create vote by user {} for restaurant {}", userId, restId);
-            vote = new Vote(userRepository.getReference(authUserId()), restRepository.getReference(restId));
+            log.info("create vote by user {} for restaurant {}", user, restId);
+            vote = new Vote(userService.getReference(authUserId()), restService.getReference(restId));
         } else if (LocalTime.now().isBefore(END_TIME_OF_VOTE)){
-            log.info("update vote by user {} for restaurant {}", userId, restId);
-            vote.setRestaurant(restRepository.getReference(restId));
+            log.info("update vote by user {} for restaurant {}", user, restId);
+            vote.setRestaurant(restService.getReference(restId));
         } else {
-            throw new IllegalRequestDataException("you can revote before 11:00");
+            throw new IllegalRequestDataException("you can re-vote before 11:00");
         }
 
-        return voteRepository.save(vote);
+        return voteService.save(vote);
     }
 }

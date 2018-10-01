@@ -1,10 +1,8 @@
-package ru.zippospb.restvote.repository.datajpa;
+package ru.zippospb.restvote.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.zippospb.restvote.model.Restaurant;
-import ru.zippospb.restvote.repository.AbstractRepositoryTest;
-import ru.zippospb.restvote.repository.RestaurantRepository;
 import ru.zippospb.restvote.util.ValidationUtil;
 
 import javax.validation.ConstraintViolationException;
@@ -13,28 +11,28 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.zippospb.restvote.RestaurantTestData.*;
 
-class DataJpaRestaurantRepositoryImplTest extends AbstractRepositoryTest {
+class RestaurantServiceImplTest extends AbstractServiceTest {
 
     @Autowired
-    private RestaurantRepository repository;
+    private RestaurantService service;
 
     @Test
     void testGetAll() {
-        List<Restaurant> actual = repository.getAll();
+        List<Restaurant> actual = service.getAll();
         assertMatch(actual, REST1, REST2, REST3);
     }
 
     @Test
     void testGet() {
-        assertMatch(repository.get(REST1_ID), REST1);
+        assertMatch(service.get(REST1_ID), REST1);
     }
 
     @Test
     void testCreate() {
         Restaurant newRest = getNew();
-        Restaurant created = repository.save(getNew());
+        Restaurant created = service.create(getNew());
         newRest.setId(created.getId());
-        assertMatch(repository.getAll(), REST1, REST2, REST3, newRest);
+        assertMatch(service.getAll(), REST1, REST2, REST3, newRest);
     }
 
     @Test
@@ -43,7 +41,7 @@ class DataJpaRestaurantRepositoryImplTest extends AbstractRepositoryTest {
         newRest.setName("");
         assertThrows(ConstraintViolationException.class, () -> {
             try {
-                repository.save(newRest);
+                service.create(newRest);
             } catch (Exception e) {
                 throw ValidationUtil.getRootCause(e);
             }
@@ -54,8 +52,8 @@ class DataJpaRestaurantRepositoryImplTest extends AbstractRepositoryTest {
     void testUpdate() {
         Restaurant updated = new Restaurant(REST1);
         updated.setName("новый ресторан");
-        repository.save(updated);
-        assertMatch(repository.get(updated.getId()), updated);
+        service.create(updated);
+        assertMatch(service.get(updated.getId()), updated);
     }
 
     @Test
@@ -64,7 +62,7 @@ class DataJpaRestaurantRepositoryImplTest extends AbstractRepositoryTest {
         updated.setName("");
         assertThrows(ConstraintViolationException.class, () -> {
             try {
-                repository.save(updated);
+                service.create(updated);
             } catch (Exception e) {
                 throw ValidationUtil.getRootCause(e);
             }
@@ -73,7 +71,7 @@ class DataJpaRestaurantRepositoryImplTest extends AbstractRepositoryTest {
 
     @Test
     void testDelete() {
-        repository.delete(REST1_ID);
-        assertMatch(repository.getAll(), REST2, REST3);
+        service.delete(REST1_ID);
+        assertMatch(service.getAll(), REST2, REST3);
     }
 }
