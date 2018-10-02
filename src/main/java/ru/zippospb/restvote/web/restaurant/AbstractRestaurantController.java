@@ -39,7 +39,6 @@ public abstract class AbstractRestaurantController {
         return restService.getAll();
     }
 
-    //TODO возможно лучше будет сделать ТО с добавлением поля "Количество голосов"
     Restaurant get(int id){
         log.info("getUserVote {}", id);
         return restService.get(id);

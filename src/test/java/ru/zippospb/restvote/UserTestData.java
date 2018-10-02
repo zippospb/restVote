@@ -4,7 +4,6 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import ru.zippospb.restvote.model.Role;
 import ru.zippospb.restvote.model.User;
 import ru.zippospb.restvote.web.json.JsonUtil;
-//import ru.zippospb.restvote.web.json.JsonUtil;
 
 import java.util.Arrays;
 
@@ -12,7 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static ru.zippospb.restvote.model.AbstractBaseEntity.START_SEQ;
 import static ru.zippospb.restvote.web.json.JsonUtil.writeIgnoreProps;
-//import static ru.zippospb.restvote.web.json.JsonUtil.writeIgnoreProps;
 
 public class UserTestData {
     public static final int USER1_ID = START_SEQ;
@@ -28,7 +26,7 @@ public class UserTestData {
     }
 
     public static void assertMatch(User actual, User expected) {
-        assertThat(actual).isEqualToIgnoringGivenFields(expected,"votes", "password");
+        assertThat(actual).isEqualToIgnoringGivenFields(expected,"registered", "password");
     }
 
     public static void assertMatch(Iterable<User> actual, User... expected) {
@@ -36,15 +34,15 @@ public class UserTestData {
     }
 
     public static void assertMatch(Iterable<User> actual, Iterable<User> expected) {
-        assertThat(actual).usingElementComparatorIgnoringFields("votes", "password").isEqualTo(expected);
+        assertThat(actual).usingElementComparatorIgnoringFields("registered", "password").isEqualTo(expected);
     }
 
     public static ResultMatcher contentJson(User... expected) {
-        return content().json(writeIgnoreProps(Arrays.asList(expected), "votes", "password"));
+        return content().json(writeIgnoreProps(Arrays.asList(expected), "registered", "password"));
     }
 
     public static ResultMatcher contentJson(User expected) {
-        return content().json(writeIgnoreProps(expected, "password"));
+        return content().json(writeIgnoreProps(expected, "registered", "password"));
     }
 
     public static String jsonWithPassword(User user, String passw) {

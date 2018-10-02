@@ -7,8 +7,13 @@ import org.springframework.util.CollectionUtils;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email", name = "users_unique_email_idx"))
@@ -31,6 +36,14 @@ public class User extends AbstractNamedEntity {
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    @Column(name = "registered", columnDefinition = "timestamp default now()")
+    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime registered = LocalDateTime.now();
+
+    @Column(name = "enabled", nullable = false, columnDefinition = "bool default true")
+    private boolean enabled = true;
 
     public User() {}
 
@@ -65,6 +78,14 @@ public class User extends AbstractNamedEntity {
         return password;
     }
 
+    public LocalDateTime getRegistered() {
+        return registered;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -73,12 +94,25 @@ public class User extends AbstractNamedEntity {
         this.password = password;
     }
 
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public void setRegistered(LocalDateTime registered) {
+        this.registered = registered;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 super.toString() +
                 "email='" + email + '\'' +
-                ", password='" + password + '\'' +
+                ", enabled=" + enabled +
+                ", roles=" + roles +
                 "} ";
     }
 }
