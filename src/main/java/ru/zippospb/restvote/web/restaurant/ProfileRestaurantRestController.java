@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.zippospb.restvote.model.Restaurant;
 import ru.zippospb.restvote.model.Vote;
+import ru.zippospb.restvote.to.RestaurantTo;
 
 import java.net.URI;
 import java.util.List;
@@ -19,14 +20,14 @@ public class ProfileRestaurantRestController extends  AbstractRestaurantControll
 
     @Override
     @GetMapping
-    public List<Restaurant> getAll(){
-        return super.getAll();
+    public List<RestaurantTo> getAllTo(){
+        return super.getAllTo();
     }
 
     @Override
     @GetMapping("/{id}")
-    public Restaurant get(@PathVariable("id") int id){
-        return super.get(id);
+    public RestaurantTo getTo(@PathVariable("id") int id){
+        return super.getTo(id);
     }
 
     @GetMapping("/{id}/votes")

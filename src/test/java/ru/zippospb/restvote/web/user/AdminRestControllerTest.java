@@ -56,6 +56,14 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testForbidden() throws Exception {
+        mockMvc.perform(get(REST_URL + USER1_ID)
+                .with(userHttpBasic(USER1)))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void testGetByMail() throws Exception {
         mockMvc.perform(get(REST_URL + "by?email=" + ADMIN_EMAIL)
                 .with(userHttpBasic(ADMIN)))

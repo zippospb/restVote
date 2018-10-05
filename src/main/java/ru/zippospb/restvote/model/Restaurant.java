@@ -17,9 +17,6 @@ public class Restaurant extends AbstractNamedEntity {
     @Where(clause = "date=CURRENT_DATE")
     private List<Dish> dishes;
 
-    @Formula("(SELECT COUNT(v.restaurant_id) FROM votes v WHERE v.restaurant_id=id AND v.date=CURRENT_DATE GROUP BY v.restaurant_id)")
-    private Integer voteCount;
-
     public Restaurant() {}
 
     public Restaurant(Integer id, String name, Dish... dishes) {
@@ -42,16 +39,8 @@ public class Restaurant extends AbstractNamedEntity {
                 "} ";
     }
 
-    public int getVoteCount() {
-        return voteCount;
-    }
-
     public List<Dish> getDishes() {
         return dishes;
-    }
-
-    public void setVoteCount(Integer voteCount) {
-        this.voteCount = voteCount;
     }
 
     public void setDishes(List<Dish> dishes) {

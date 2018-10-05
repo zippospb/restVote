@@ -8,8 +8,6 @@ import ru.zippospb.restvote.repository.datajpa.CrudVoteRepository;
 
 import java.time.LocalDate;
 
-import static ru.zippospb.restvote.util.ValidationUtil.checkNotFoundWithId;
-
 @Repository
 public class VoteServiceImpl implements VoteService {
     private final CrudVoteRepository repository;
@@ -28,5 +26,10 @@ public class VoteServiceImpl implements VoteService {
     public Vote save(Vote vote) {
         Assert.notNull(vote, "vote must not be null");
         return repository.save(vote);
+    }
+
+    @Override
+    public int getVoteCount(int restId, LocalDate date) {
+        return repository.getVoteCount(restId, date);
     }
 }

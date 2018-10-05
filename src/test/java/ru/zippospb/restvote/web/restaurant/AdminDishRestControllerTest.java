@@ -23,6 +23,7 @@ import static ru.zippospb.restvote.RestaurantTestData.REST1_ID;
 import static ru.zippospb.restvote.TestUtil.readFromJson;
 import static ru.zippospb.restvote.TestUtil.userHttpBasic;
 import static ru.zippospb.restvote.UserTestData.ADMIN;
+import static ru.zippospb.restvote.UserTestData.USER1;
 import static ru.zippospb.restvote.web.restaurant.AdminDishRestController.REST_URL;
 
 class AdminDishRestControllerTest extends AbstractControllerTest {
@@ -71,6 +72,14 @@ class AdminDishRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(ErrorType.DATA_NOT_FOUND));
+    }
+
+    @Test
+    void testGetForbidden() throws Exception {
+        mockMvc.perform(get(REST1_REST_URL + REST1_DISH1_ID)
+                .with(userHttpBasic(USER1)))
+                .andDo(print())
+                .andExpect(status().isForbidden());
     }
 
     @Test

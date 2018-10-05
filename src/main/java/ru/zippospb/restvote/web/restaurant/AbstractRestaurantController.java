@@ -10,11 +10,14 @@ import ru.zippospb.restvote.model.Vote;
 import ru.zippospb.restvote.service.RestaurantService;
 import ru.zippospb.restvote.service.UserService;
 import ru.zippospb.restvote.service.VoteService;
+import ru.zippospb.restvote.to.RestaurantTo;
 import ru.zippospb.restvote.util.exception.IllegalRequestDataException;
 import ru.zippospb.restvote.web.security.SecurityUtil;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.zippospb.restvote.util.ValidationUtil.assureIdConsistent;
 import static ru.zippospb.restvote.util.ValidationUtil.checkNew;
@@ -39,8 +42,23 @@ public abstract class AbstractRestaurantController {
         return restService.getAll();
     }
 
+    List<RestaurantTo> getAllTo(){
+        log.info("getAllTo");
+        return restService.getAll().stream()
+                .map(rest -> new RestaurantTo(rest, getVoteCount(rest.getId(), LocalDate.now())))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    RestaurantTo getTo(int id){
+        log.info("getTo {}", id);
+        Restaurant restaurant = restService.get(id);
+        int voteCount = getVoteCount(id, LocalDate.now());
+        return new RestaurantTo(restaurant, voteCount);
+    }
+
     Restaurant get(int id){
-        log.info("getUserVote {}", id);
+        log.info("get {}", id);
         return restService.get(id);
     }
 
@@ -78,5 +96,9 @@ public abstract class AbstractRestaurantController {
         }
 
         return voteService.save(vote);
+    }
+
+    private int getVoteCount(int restId, LocalDate date){
+        return voteService.getVoteCount(restId, date);
     }
 }
