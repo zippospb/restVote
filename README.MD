@@ -1,3 +1,6 @@
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/217824fe0337460f8f055f65ae4465de)](https://app.codacy.com/app/zippospb/restVote?utm_source=github.com&utm_medium=referral&utm_content=zippospb/restVote&utm_campaign=Badge_Grade_Dashboard)
+
 **TASK:**
 
 Build a voting system for deciding where to have lunch.
