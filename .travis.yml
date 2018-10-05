@@ -1,0 +1,16 @@
+language: java
+jdk: oraclejdk8
+
+cache:
+  directories:
+  - $HOME/.m2
+
+branches:
+  only:
+  - master
+
+env:
+- TOPJAVA_ROOT=$TRAVIS_BUILD_DIR
+
+after_success:
+- bash <(curl -s https://codecov.io/bash)

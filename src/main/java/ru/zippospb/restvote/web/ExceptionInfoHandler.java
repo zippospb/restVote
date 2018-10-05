@@ -53,9 +53,7 @@ public class ExceptionInfoHandler {
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
         String rootMsg = ValidationUtil.getRootCause(e).getMessage();
         if (rootMsg != null) {
-            String lowerCaseMsg = rootMsg.toLowerCase();
-            //TODO возможно надо делать разделение, какие именно дубли возникают (у нас несколько Unique constraints)
-            return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, VALIDATION_ERROR.getErrorMsg());
+            return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, rootMsg);
         }
         return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }

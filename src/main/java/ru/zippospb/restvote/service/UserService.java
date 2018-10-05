@@ -19,6 +19,4 @@ public interface UserService {
     void delete(int id);
 
     User getByEmail(String email);
-
-    User getReference(int userId);
 }

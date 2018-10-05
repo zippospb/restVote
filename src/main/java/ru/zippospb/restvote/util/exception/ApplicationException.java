@@ -9,18 +9,16 @@ public class ApplicationException extends RuntimeException {
     private final ErrorType type;
     private final String msg;
     private final HttpStatus httpStatus;
-    private final String[] args;
 
     public ApplicationException(String msg, HttpStatus httpStatus) {
         this(ErrorType.APP_ERROR, msg, httpStatus);
     }
 
-    public ApplicationException(ErrorType type, String msg, HttpStatus httpStatus, String... args) {
-        super(String.format("type=%s, msg=%s, args=%s", type, msg, Arrays.toString(args)));
+    public ApplicationException(ErrorType type, String msg, HttpStatus httpStatus) {
+        super(String.format("type=%s, msg=%s", type, msg));
         this.type = type;
         this.msg = msg;
         this.httpStatus = httpStatus;
-        this.args = args;
     }
 
     public ErrorType getType() {
@@ -33,9 +31,5 @@ public class ApplicationException extends RuntimeException {
 
     public HttpStatus getHttpStatus() {
         return httpStatus;
-    }
-
-    public String[] getArgs() {
-        return args;
     }
 }

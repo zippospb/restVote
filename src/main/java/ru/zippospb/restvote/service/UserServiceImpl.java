@@ -66,11 +66,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User getReference(int userId) {
-        return repository.getOne(userId);
-    }
-
-    @Override
     public User getByEmail(String email) {
         Assert.notNull(email, "email must not be null");
         return checkNotFound(repository.getByEmail(email), "email=" + email);
