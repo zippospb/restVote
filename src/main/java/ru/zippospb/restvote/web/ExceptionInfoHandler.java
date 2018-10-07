@@ -5,16 +5,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.zippospb.restvote.util.ValidationUtil;
 import ru.zippospb.restvote.util.exception.ApplicationException;
 import ru.zippospb.restvote.util.exception.ErrorInfo;
 import ru.zippospb.restvote.util.exception.ErrorType;
+import ru.zippospb.restvote.util.exception.IllegalRequestDataException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
@@ -56,6 +59,12 @@ public class ExceptionInfoHandler {
             return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, rootMsg);
         }
         return logAndGetErrorInfo(req, e, true, DATA_ERROR);
+    }
+
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
+    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
+    public ErrorInfo illegalRequestDataError(HttpServletRequest req, Exception e) {
+        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
     }
 
     private ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType, String... details) {

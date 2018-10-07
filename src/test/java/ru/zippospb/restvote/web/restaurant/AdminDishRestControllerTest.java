@@ -7,7 +7,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import ru.zippospb.restvote.TestUtil;
 import ru.zippospb.restvote.model.Dish;
 import ru.zippospb.restvote.service.DishService;
-import ru.zippospb.restvote.service.RestaurantService;
 import ru.zippospb.restvote.util.exception.ErrorType;
 import ru.zippospb.restvote.web.AbstractControllerTest;
 import ru.zippospb.restvote.web.json.JsonUtil;
@@ -27,13 +26,10 @@ import static ru.zippospb.restvote.UserTestData.USER1;
 import static ru.zippospb.restvote.web.restaurant.AdminDishRestController.REST_URL;
 
 class AdminDishRestControllerTest extends AbstractControllerTest {
-    private final static String REST1_REST_URL = REST_URL.replaceAll("\\{restId\\}", String.valueOf(REST1_ID)) + "/";
+    private final static String REST1_REST_URL = REST_URL.replaceAll("\\{restId}", String.valueOf(REST1_ID)) + "/";
 
     @Autowired
     private DishService dishService;
-
-    @Autowired
-    private RestaurantService restService;
 
     @Test
     void testGetAll() throws Exception {

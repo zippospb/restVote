@@ -22,7 +22,7 @@ import static ru.zippospb.restvote.web.user.ProfileRestController.REST_URL;
 
 class ProfileRestControllerTest extends AbstractControllerTest {
     @Autowired
-    UserService service;
+    private UserService service;
 
     @Test
     void testGet() throws Exception {
@@ -67,7 +67,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     void testUpdate() throws Exception {
         UserTo updated = new UserTo(null, "updated", "updated@gmail.com", "newPass");
 
-        ResultActions action = mockMvc.perform(put(REST_URL)
+        mockMvc.perform(put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated))
                 .with(userHttpBasic(USER1)))

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.zippospb.restvote.model.Restaurant;
 import ru.zippospb.restvote.util.exception.NotFoundException;
 
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -61,6 +60,6 @@ class RestaurantServiceImplTest extends AbstractServiceTest {
 
     @Test
     void testValidation() {
-        validateRootCause(() -> service.create(new Restaurant(null, "  ")), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Restaurant(null, "  ")));
     }
 }

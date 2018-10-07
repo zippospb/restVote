@@ -8,7 +8,6 @@ import ru.zippospb.restvote.AuthorizedUser;
 import ru.zippospb.restvote.model.Restaurant;
 import ru.zippospb.restvote.model.Vote;
 import ru.zippospb.restvote.service.RestaurantService;
-import ru.zippospb.restvote.service.UserService;
 import ru.zippospb.restvote.service.VoteService;
 import ru.zippospb.restvote.to.RestaurantTo;
 import ru.zippospb.restvote.util.exception.IllegalRequestDataException;
@@ -33,9 +32,6 @@ public abstract class AbstractRestaurantController {
 
     @Autowired
     private VoteService voteService;
-
-    @Autowired
-    private UserService userService;
 
     List<Restaurant> getAll(){
         log.info("getAll");
@@ -90,9 +86,9 @@ public abstract class AbstractRestaurantController {
             vote = new Vote(SecurityUtil.get().getUser(), restService.get(restId));
         } else if (LocalTime.now().isBefore(END_TIME_OF_VOTE)){
             log.info("update vote by user {} for restaurant {}", user, restId);
-            vote.setRestaurant(restService.getReference(restId));
+            vote.setRestaurant(get(restId));
         } else {
-            throw new IllegalRequestDataException("you can re-vote before 11:00");
+            throw new IllegalRequestDataException("you can`t to re-vote after 11:00");
         }
 
         return voteService.save(vote);

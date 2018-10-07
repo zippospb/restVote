@@ -112,7 +112,7 @@ class AdminRestaurantRestControllerTest extends AbstractControllerTest {
     void testCreateInvalid() throws Exception {
         Restaurant expected = getNew();
         expected.setName("");
-        ResultActions action = mockMvc.perform(post(REST_URL)
+        mockMvc.perform(post(REST_URL)
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(expected)))

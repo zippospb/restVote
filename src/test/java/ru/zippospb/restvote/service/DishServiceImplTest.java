@@ -5,18 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.zippospb.restvote.model.Dish;
 import ru.zippospb.restvote.util.exception.NotFoundException;
 
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.zippospb.restvote.DishTestData.*;
-import static ru.zippospb.restvote.RestaurantTestData.REST1;
 import static ru.zippospb.restvote.RestaurantTestData.REST1_ID;
 
 class DishServiceImplTest extends AbstractServiceTest {
 
     @Autowired
-    DishService service;
+    private DishService service;
 
     @Test
     void testGet() {
@@ -60,8 +58,8 @@ class DishServiceImplTest extends AbstractServiceTest {
 
     @Test
     void testValidation() {
-        validateRootCause(() -> service.create(new Dish(null, "  ", REST1_ID, 100)), ConstraintViolationException.class);
-        validateRootCause(() -> service.create(new Dish(null, "New Restaurant", REST1_ID, null)), ConstraintViolationException.class);
-        validateRootCause(() -> service.create(new Dish(null, "New Restaurant", REST1_ID, 9)), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Dish(null, "  ", REST1_ID, 100)));
+        validateRootCause(() -> service.create(new Dish(null, "New Restaurant", REST1_ID, null)));
+        validateRootCause(() -> service.create(new Dish(null, "New Restaurant", REST1_ID, 9)));
     }
 }
