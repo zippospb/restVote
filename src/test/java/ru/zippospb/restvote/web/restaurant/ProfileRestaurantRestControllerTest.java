@@ -30,7 +30,7 @@ class ProfileRestaurantRestControllerTest extends AbstractControllerTest {
     private final String REST_URL = ProfileRestaurantRestController.REST_URL + "/";
 
     @Autowired
-    ProfileRestaurantRestController controller;
+    private ProfileRestaurantRestController controller;
 
     @Autowired
     private VoteService voteService;
