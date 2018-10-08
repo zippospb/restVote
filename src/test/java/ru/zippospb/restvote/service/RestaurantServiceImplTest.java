@@ -1,7 +1,10 @@
 package ru.zippospb.restvote.service;
 
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import ru.zippospb.restvote.model.Restaurant;
 import ru.zippospb.restvote.util.exception.NotFoundException;
 
@@ -14,6 +17,11 @@ class RestaurantServiceImplTest extends AbstractServiceTest {
 
     @Autowired
     private RestaurantService service;
+
+    @BeforeEach
+    private void setup(){
+        cacheManager.getCache("restaurants").clear();
+    }
 
     @Test
     void testGetAll() {

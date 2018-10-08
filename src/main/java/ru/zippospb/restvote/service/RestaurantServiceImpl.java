@@ -1,6 +1,8 @@
 package ru.zippospb.restvote.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -15,12 +17,15 @@ import static ru.zippospb.restvote.util.ValidationUtil.checkNotFoundWithId;
 public class RestaurantServiceImpl implements RestaurantService {
     private final CrudRestaurantRepository repository;
 
+
+
     @Autowired
     public RestaurantServiceImpl(CrudRestaurantRepository repository) {
         this.repository = repository;
     }
 
     @Override
+    @Cacheable("restaurants")
     public List<Restaurant> getAll() {
         return repository.findAll();
     }
@@ -31,6 +36,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @CacheEvict(value = "restaurants", allEntries = true)
     @Transactional
     public Restaurant create(Restaurant restaurant) {
         Assert.notNull(restaurant, "restaurant must not be null");
@@ -38,6 +44,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @CacheEvict(value = "restaurants", allEntries = true)
     public void update(Restaurant restaurant) {
         Assert.notNull(restaurant, "restaurant must not be null");
         Restaurant updated = get(restaurant.getId());
@@ -49,11 +56,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant getReference(int restId) {
-        return repository.getOne(restId);
-    }
-
-    @Override
+    @CacheEvict(value = "restaurants", allEntries = true)
     public void delete(int id) {
         checkNotFoundWithId(repository.delete(id) != 0, id);
     }

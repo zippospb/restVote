@@ -14,6 +14,4 @@ public interface RestaurantService {
     void update(Restaurant restaurant);
 
     void delete(int id);
-
-    Restaurant getReference(int restId);
 }

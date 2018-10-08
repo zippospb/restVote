@@ -30,15 +30,12 @@
                 <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_SQL_COMMENTS}"
                        value="${hibernate.use_sql_comments}"/>
 
-                <!--<entry key="#{T(org.hibernate.cfg.AvailableSettings).CACHE_REGION_FACTORY}"-->
-                       <!--value="org.hibernate.cache.jcache.internal.JCacheRegionFactory"/>-->
-                <!--<entry key="#{T(org.hibernate.cache.jcache.ConfigSettings).PROVIDER}"-->
-                       <!--value="org.ehcache.jsr107.EhcacheCachingProvider"/>-->
-                <!--<entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_SECOND_LEVEL_CACHE}" value="true"/>-->
-                <!--<entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_QUERY_CACHE}" value="false"/> &lt;!&ndash;default&ndash;&gt;-->
-
-                <!--<entry key="javax.persistence.validation.group.pre-persist" value="ru.javawebinar.topjava.View$Persist"/>-->
-                <!--<entry key="javax.persistence.validation.group.pre-update" value="ru.javawebinar.topjava.View$Persist"/>-->
+                <entry key="#{T(org.hibernate.cfg.AvailableSettings).CACHE_REGION_FACTORY}"
+                       value="org.hibernate.cache.jcache.internal.JCacheRegionFactory"/>
+                <entry key="#{T(org.hibernate.cache.jcache.ConfigSettings).PROVIDER}"
+                       value="org.ehcache.jsr107.EhcacheCachingProvider"/>
+                <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_SECOND_LEVEL_CACHE}" value="true"/>
+                <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_QUERY_CACHE}" value="false"/> <!--default-->
             </map>
         </property>
 
@@ -55,4 +52,6 @@
 
     <context:component-scan base-package="ru.zippospb.**.repository.datajpa"/>
     <jpa:repositories base-package="ru.zippospb.**.repository.datajpa"/>
+
+    <bean class="ru.zippospb.restvote.repository.JpaUtil"/>
 </beans>

@@ -1,5 +1,6 @@
 package ru.zippospb.restvote.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -19,6 +20,11 @@ class UserServiceImplTest extends AbstractServiceTest {
 
     @Autowired
     private UserService service;
+
+    @BeforeEach
+    private void setup(){
+        cacheManager.getCache("users").clear();
+    }
 
     @Test
     void testGetAll() {

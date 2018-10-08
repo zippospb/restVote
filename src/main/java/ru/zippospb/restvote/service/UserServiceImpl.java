@@ -1,6 +1,8 @@
 package ru.zippospb.restvote.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,6 +34,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Cacheable("users")
     public List<User> getAll() {
         return repository.findAll();
     }
@@ -42,12 +45,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @CacheEvict("users")
     public User create(User user) {
         Assert.notNull(user, "user must not be null");
         return repository.save(prepareToSave(user, passwordEncoder));
     }
 
     @Override
+    @CacheEvict("users")
     public void update(User user) {
         Assert.notNull(user, "user must not be null");
         checkNotFoundWithId(repository.save(prepareToSave(user, passwordEncoder)), user.getId());
@@ -55,12 +60,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
+    @CacheEvict("users")
     public void update(UserTo userTo) {
         User user = updateFromTo(get(userTo.getId()), userTo);
         repository.save(prepareToSave(user, passwordEncoder));
     }
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public void delete(int id) {
         checkNotFoundWithId(repository.delete(id) != 0, id);
     }

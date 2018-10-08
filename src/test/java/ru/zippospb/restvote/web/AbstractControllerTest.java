@@ -1,6 +1,8 @@
 package ru.zippospb.restvote.web;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -8,6 +10,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import ru.zippospb.restvote.repository.JpaUtil;
 import ru.zippospb.restvote.util.exception.ErrorType;
 
 import javax.annotation.PostConstruct;
@@ -33,6 +36,12 @@ public class AbstractControllerTest {
     protected MockMvc mockMvc;
 
     @Autowired
+    CacheManager cacheManager;
+
+    @Autowired
+    private JpaUtil jpaUtil;
+
+    @Autowired
     private WebApplicationContext webApplicationContext;
 
     @PostConstruct
@@ -42,6 +51,13 @@ public class AbstractControllerTest {
                 .addFilter(CHARACTER_ENCODING_FILTER)
                 .apply(springSecurity())
                 .build();
+    }
+
+    @BeforeEach
+    private void init(){
+        cacheManager.getCache("restaurants").clear();
+        cacheManager.getCache("users").clear();
+        jpaUtil.clear2ndLevelHibernateCache();
     }
 
     public ResultMatcher errorType(ErrorType type) {

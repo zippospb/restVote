@@ -1,6 +1,7 @@
 package ru.zippospb.restvote.model;
 
-import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -9,8 +10,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Table(name = "restaurants")
 public class Restaurant extends AbstractNamedEntity {
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id")
     @OrderBy("name ASC")
