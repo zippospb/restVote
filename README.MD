@@ -10,21 +10,27 @@
 Build a voting system for deciding where to have lunch.
 
 - 2 types of users: admin and regular users
+
 - Admin can input a restaurant and it's lunch menu of the day (2-5 items usually, just a dish name and price)
-- Menu changes each day (admins do the updates)
+
+- Menu changes each day (admins do the updates)  
+
 - Users can vote on which restaurant they want to have lunch at
+
 - Only one vote counted per user
-- If user votes again the same day:
+  
+- If user votes again the same day:  
     - If it is before 11:00 we asume that he changed his mind.
     - If it is after 11:00 then it is too late, vote can't be changed
+    
 - Each restaurant provides new menu each day.
 
 ##DESCRIPTION
-- There are 4 entities in project:User, Restaurant, Dish and Vote.
+- There are 4 entities in project: User, Restaurant, Dish and Vote.
 
 - Users have following fields: id; name; email(must be unique); password; Role (ROLE_ADMIN and ROLE_USER).
 
-- Restaurant : id; name; dishes; voteCount (number of users who voted today for the restaurant).
+- Restaurant: id; name; dishes; voteCount (number of users who voted today for the restaurant).
 
 - Dish: id; name; price; date(date of creating);
 
@@ -34,9 +40,9 @@ Build a voting system for deciding where to have lunch.
 
 - There is basic authentication, for admin it is: admin@gamil.com password:Admin, for first user it is: login:user@mail.ru password:qwert, for second user it is: login:user2@mail.ru password:asdfg.
 
-**Admins can create, delete, update users,restaurants and dish.**
+#####Admins can create, delete, update users,restaurants and dish.
   
-**Authorized admins HTTP requests:**
+#####Authorized admins HTTP requests:
 
 GET:    `/rest/admin/users` Gets all users
 
@@ -72,9 +78,9 @@ DELETE: `/rest/admin/restaurants/{restId}/dishes/{dishId}` Delete dish by restau
 
 PUT:    `/rest/admin/restaurants/{restId}/dishes/{dishId}` Update dish by restaurant id and dish id
 
-**Users can delete and update self profile, watch restaurants and dish, and can vote for certain restaurant.**
+#####Users can delete and update self profile, watch restaurants and dish, and can vote for certain restaurant.  
 
-**Authorized Users HTTP requests:**
+#####Authorized Users HTTP requests:
 
 GET:    `/rest/profile` Get login user
 
@@ -88,14 +94,14 @@ GET:    `/rest/profile/restaurants/{restId}` Get restaurant with current date di
 
 GET:    `/rest/profile/restaurant/{restId}`/votes Vote by restaurant with id
 
-**Unauthorized users HTTP requests:**
+#####Unauthorized users HTTP requests:
 
 POST:   `/rest/profile/register` Register new user
 
 ###CURLS
 (application deployed in application context restvote).
 
-**Curl samples for Authorized admins:**
+#####Curl samples for Authorized admins:
 
 get All Users  
 `curl -i http://localhost:8080/restvote/rest/admin/users --user admin@gmail.com:lkjh33498yhnbyfgi563`

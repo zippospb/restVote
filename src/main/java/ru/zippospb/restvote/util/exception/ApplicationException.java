@@ -2,8 +2,6 @@ package ru.zippospb.restvote.util.exception;
 
 import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
-
 public class ApplicationException extends RuntimeException {
 
     private final ErrorType type;

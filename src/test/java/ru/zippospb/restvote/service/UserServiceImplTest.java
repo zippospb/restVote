@@ -22,7 +22,7 @@ class UserServiceImplTest extends AbstractServiceTest {
     private UserService service;
 
     @BeforeEach
-    private void setup(){
+    private void setUp(){
         cacheManager.getCache("users").clear();
     }
 
