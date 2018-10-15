@@ -22,7 +22,7 @@ class VoteServiceImplTest extends AbstractServiceTest{
 
     @Test
     void testGetNoCurrentDateUserVote() {
-        assertNull(service.getUserVote(USER1_ID));
+        assertNull(service.getByUser(USER1_ID));
     }
 
     @Test
@@ -30,7 +30,7 @@ class VoteServiceImplTest extends AbstractServiceTest{
         Vote newVote = new Vote(USER1, REST1);
         Vote created = service.save(newVote);
         newVote.setId(created.getId());
-        assertMatch(service.getUserVote(USER1_ID), newVote);
+        assertMatch(service.getByUser(USER1_ID), newVote);
     }
 
     @Test

@@ -18,7 +18,7 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public Vote getUserVote(int userId) {
+    public Vote getByUser(int userId) {
         return repository.getByUserIdAndDate(userId, LocalDate.now());
     }
 

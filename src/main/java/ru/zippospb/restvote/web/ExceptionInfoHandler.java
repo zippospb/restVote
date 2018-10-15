@@ -14,15 +14,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.zippospb.restvote.util.ValidationUtil;
-import ru.zippospb.restvote.util.exception.ApplicationException;
-import ru.zippospb.restvote.util.exception.ErrorInfo;
-import ru.zippospb.restvote.util.exception.ErrorType;
-import ru.zippospb.restvote.util.exception.IllegalRequestDataException;
+import ru.zippospb.restvote.util.exception.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 import static ru.zippospb.restvote.util.exception.ErrorType.DATA_ERROR;
+import static ru.zippospb.restvote.util.exception.ErrorType.REVOTE_ERROR;
 import static ru.zippospb.restvote.util.exception.ErrorType.VALIDATION_ERROR;
 
 @RestControllerAdvice
@@ -65,6 +63,12 @@ public class ExceptionInfoHandler {
     @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
     public ErrorInfo illegalRequestDataError(HttpServletRequest req, Exception e) {
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+    }
+
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(TooLateToVoteException.class)
+    public ErrorInfo tooLateToVoteError(HttpServletRequest req, Exception e){
+        return logAndGetErrorInfo(req, e, false, REVOTE_ERROR);
     }
 
     private ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType, String... details) {

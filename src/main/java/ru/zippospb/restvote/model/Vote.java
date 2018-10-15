@@ -1,5 +1,8 @@
 package ru.zippospb.restvote.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -10,6 +13,9 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 @Entity
+@NoArgsConstructor
+@Getter
+@Setter
 @Table(name = "votes", uniqueConstraints = @UniqueConstraint(name = "vote_unique_user_date_idx", columnNames = {"user_id", "date"}))
 public class Vote extends AbstractBaseEntity {
 
@@ -33,8 +39,6 @@ public class Vote extends AbstractBaseEntity {
     @NotNull
     private LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.MINUTES);
 
-    public Vote() { }
-
     public Vote(User user, Restaurant restaurant) {
         this.user = user;
         this.restaurant = restaurant;
@@ -46,38 +50,6 @@ public class Vote extends AbstractBaseEntity {
         this.restaurant = restaurant;
         this.date = date;
         this.time = time;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public LocalTime getTime() {
-        return time;
     }
 
     @Override

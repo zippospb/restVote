@@ -4,28 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import ru.zippospb.restvote.AuthorizedUser;
 import ru.zippospb.restvote.model.Restaurant;
-import ru.zippospb.restvote.model.Vote;
 import ru.zippospb.restvote.service.RestaurantService;
 import ru.zippospb.restvote.service.VoteService;
 import ru.zippospb.restvote.to.RestaurantTo;
-import ru.zippospb.restvote.util.exception.IllegalRequestDataException;
-import ru.zippospb.restvote.web.security.SecurityUtil;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static ru.zippospb.restvote.util.ValidationUtil.assureIdConsistent;
 import static ru.zippospb.restvote.util.ValidationUtil.checkNew;
-import static ru.zippospb.restvote.web.security.SecurityUtil.saveGet;
 
 public abstract class AbstractRestaurantController {
     private final Logger log = LoggerFactory.getLogger(getClass());
-
-    private final LocalTime END_TIME_OF_VOTE = LocalTime.of(11, 0, 0);
 
     @Autowired
     private RestaurantService restService;
@@ -38,6 +30,7 @@ public abstract class AbstractRestaurantController {
         return restService.getAll();
     }
 
+    @Transactional
     List<RestaurantTo> getAllTo(){
         log.info("getAllTo");
         return restService.getAll().stream()
@@ -73,25 +66,6 @@ public abstract class AbstractRestaurantController {
     void delete(int id) {
         log.info("delete {}", id);
         restService.delete(id);
-    }
-
-    @Transactional
-    Vote vote(int restId) {
-        AuthorizedUser user = saveGet();
-        assert user != null;
-        Vote vote = voteService.getUserVote(user.getId());
-
-        if(vote == null){
-            log.info("create vote by user {} for restaurant {}", user, restId);
-            vote = new Vote(SecurityUtil.get().getUser(), restService.get(restId));
-        } else if (LocalTime.now().isBefore(END_TIME_OF_VOTE)){
-            log.info("update vote by user {} for restaurant {}", user, restId);
-            vote.setRestaurant(get(restId));
-        } else {
-            throw new IllegalRequestDataException("you can`t to re-vote after 11:00");
-        }
-
-        return voteService.save(vote);
     }
 
     private int getVoteCount(int restId, LocalDate date){

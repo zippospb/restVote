@@ -23,7 +23,7 @@ public class AbstractUserController {
     }
 
     public User get(int id) {
-        log.info("getUserVote {}", id);
+        log.info("get {}", id);
         return service.get(id);
     }
 

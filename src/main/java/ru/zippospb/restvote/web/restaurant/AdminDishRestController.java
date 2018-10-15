@@ -48,7 +48,7 @@ public class AdminDishRestController {
     @GetMapping("/{dishId}")
     public Dish get(@PathVariable("restId") int restId, @PathVariable("dishId") int dishId){
         log.info("getDish {} for restaurant {}", dishId, restId);
-        return checkNotFoundWithId(dishService.get(restId, dishId), dishId);
+        return dishService.get(restId, dishId);
     }
 
     @PostMapping

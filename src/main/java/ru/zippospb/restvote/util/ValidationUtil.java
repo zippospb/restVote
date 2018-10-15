@@ -23,21 +23,21 @@ public class ValidationUtil {
         }
     }
 
-    public static <T> T checkNotFoundWithId(T object, int id) {
+    public static <T extends HasId> T checkNotFoundWithId(T object, int id) {
         return checkNotFound(object, "id=" + id);
     }
 
-    public static <T> T checkNotFoundWithId(Optional<T> optional, int id) {
+    public static <T, S extends Optional<T>> T checkNotFoundWithId(S optional, int id) {
         checkNotFound(optional.isPresent(), "id=" + id);
         return optional.get();
     }
 
-    public static <T> T checkNotFoundWithId(Optional<T> optional, String msg) {
+    public static <T, S extends Optional<T>> T checkNotFoundWithId(S optional, String msg) {
         checkNotFound(optional.isPresent(), msg);
         return optional.get();
     }
 
-    public static <T> T checkNotFound(T object, String msg) {
+    public static <T extends HasId> T checkNotFound(T object, String msg) {
         checkNotFound(object != null, msg);
         return object;
     }

@@ -74,7 +74,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(service.getByEmail(updated.getEmail()), UserUtil.updateFromTo(USER1, updated));
+        assertMatch(service.getByEmail(updated.getEmail()), UserUtil.updateFromTo(new User(USER1), updated));
     }
 
     @Test

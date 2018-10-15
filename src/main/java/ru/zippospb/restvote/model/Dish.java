@@ -1,6 +1,7 @@
 package ru.zippospb.restvote.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.Column;
@@ -11,6 +12,9 @@ import java.time.LocalDate;
 
 
 @Entity
+@NoArgsConstructor
+@Getter
+@Setter
 @Table(name = "dishes")
 public class Dish extends AbstractNamedEntity {
 
@@ -26,8 +30,6 @@ public class Dish extends AbstractNamedEntity {
     @NotNull
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDate date = LocalDate.now();
-
-    public Dish() {}
 
     Dish(Dish dish, Integer restaurantId) {
         this(dish.id, dish.name, restaurantId, dish.price);
@@ -48,22 +50,6 @@ public class Dish extends AbstractNamedEntity {
 
     public Dish(Dish dish) {
         this(dish.id, dish.name, dish.restaurantId, dish.price, dish.date);
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public void setRestaurantId(Integer restaurantId) {
-        this.restaurantId = restaurantId;
-    }
-
-    public Integer getRestaurantId() {
-        return restaurantId;
     }
 
     @Override

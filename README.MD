@@ -9,38 +9,38 @@
 
 Build a voting system for deciding where to have lunch.
 
-- 2 types of users: admin and regular users
+- 2 types of users: admin and regular users  
 
-- Admin can input a restaurant and it's lunch menu of the day (2-5 items usually, just a dish name and price)
+- Admin can input a restaurant and it's lunch menu of the day (2-5 items usually, just a dish name and price)  
 
-- Menu changes each day (admins do the updates)  
+- Menu changes each day (admins do the updates)    
 
-- Users can vote on which restaurant they want to have lunch at
+- Users can vote on which restaurant they want to have lunch at  
 
-- Only one vote counted per user
-  
-- If user votes again the same day:  
-    - If it is before 11:00 we asume that he changed his mind.
-    - If it is after 11:00 then it is too late, vote can't be changed
+- Only one vote counted per user  
+
+- If user votes again the same day:    
+  - If it is before 11:00 we asume that he changed his mind.
+  - If it is after 11:00 then it is too late, vote can't be changed
     
 - Each restaurant provides new menu each day.
 
 ##DESCRIPTION
-- There are 4 entities in project: User, Restaurant, Dish and Vote.
+- There are 4 entities in project: User, Restaurant, Dish and Vote.  
 
-- Users have following fields: id; name; email(must be unique); password; Role (ROLE_ADMIN and ROLE_USER).
+- Users have following fields: id; name; email(must be unique); password; Role (ROLE_ADMIN and ROLE_USER).  
 
-- Restaurant: id; name; dishes; voteCount (number of users who voted today for the restaurant).
+- Restaurant: id; name; dishes; voteCount (number of users who voted today for the restaurant).  
 
-- Dish: id; name; price; date(date of creating);
+- Dish: id; name; price; date(date of creating);  
 
-- Voting: id; user(who vote); restaurant(for what exactly voted); date (of voting); time (of voting).
+- Voting: id; user(who vote); restaurant(for what exactly voted); date (of voting); time (of voting).  
 
-- For POST and PUT forms, data receiving in JSON. Mandatory fields to transmit for user: name, email, password. Mandatory fields to transmit for restaurant: name. Mandatory to transmit fields for dishes: name, price.
+- For POST and PUT forms, data receiving in JSON. Mandatory fields to transmit for user: name, email, password. Mandatory fields to transmit for restaurant: name. Mandatory to transmit fields for dishes: name, price.  
 
-- There is basic authentication, for admin it is: admin@gamil.com password:Admin, for first user it is: login:user@mail.ru password:qwert, for second user it is: login:user2@mail.ru password:asdfg.
+- There is basic authentication, for admin it is: admin@gamil.com password:Admin, for first user it is: login:user@mail.ru password:qwert, for second user it is: login:user2@mail.ru password:asdfg.  
 
-#####Admins can create, delete, update users,restaurants and dish.
+#####Admins can create, delete, update users,restaurants and dishes.
   
 #####Authorized admins HTTP requests:
 
@@ -78,21 +78,23 @@ DELETE: `/rest/admin/restaurants/{restId}/dishes/{dishId}` Delete dish by restau
 
 PUT:    `/rest/admin/restaurants/{restId}/dishes/{dishId}` Update dish by restaurant id and dish id
 
-#####Users can delete and update self profile, watch restaurants and dish, and can vote for certain restaurant.  
+#####Users can delete and update self profile, watch restaurants with dishes, watch self vote and can vote for certain restaurant.  
 
 #####Authorized Users HTTP requests:
 
-GET:    `/rest/profile` Get login user
+GET:    `/rest/profile` Get logged user
 
-DELETE: `/rest/profile` Delete login user
+DELETE: `/rest/profile` Delete logged user
 
-PUT:    `/rest/profile` Update login user
+PUT:    `/rest/profile` Update logged user
+
+GET:    `/rest/profile/vote` Get current day logged user vote
 
 GET:    `/rest/profile/restaurants` Get all restaurants with current date dishes
 
 GET:    `/rest/profile/restaurants/{restId}` Get restaurant with current date dishes by id
 
-GET:    `/rest/profile/restaurant/{restId}`/votes Vote by restaurant with id
+GET:    `/rest/profile/restaurants/{restId}/votes` Vote by restaurant with id
 
 #####Unauthorized users HTTP requests:
 
@@ -154,7 +156,7 @@ delete dish by restaurant id and dish id
 update dish by restaurant id and dish id  
 `curl -i -X PUT -d '{"name":"updated dish","price":50,"date":"2018-10-01"}' -H 'Content-Type: application/json' http://localhost:8080/restvote/rest/admin/restaurants/100003/dishes/100006 --user admin@gmail.com:lkjh33498yhnbyfgi563`
 
-**Curl samples for Authorized users**  
+####Curl samples for Authorized users  
 get the current user  
 `curl -i http://localhost:8080/restvote/rest/profile --user user@mail.ru:qwert`
 
@@ -163,6 +165,9 @@ delete the current user
 
 update the current user  
 `curl -i -X PUT -d '{"name":"updated user","email":"updated@gmail.com","password":"zxcvb"}' -H 'Content-Type: application/json' http://localhost:8080/restvote/rest/profile --user user@mail.ru:qwert`
+
+get the current user vote  
+`curl -i http://localhost:8080/restvote/rest/profile/vote --user user@mail.ru:qwert`
 
 get all restaurants with current date dishes  
 `curl -i http://localhost:8080/restvote/rest/profile/restaurants --user user@mail.ru:qwert`

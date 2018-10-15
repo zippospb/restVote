@@ -1,12 +1,10 @@
 package ru.zippospb.restvote.web.restaurant;
 
 import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.zippospb.restvote.model.Vote;
 import ru.zippospb.restvote.to.RestaurantTo;
 
 import java.util.List;
@@ -26,11 +24,5 @@ public class ProfileRestaurantRestController extends  AbstractRestaurantControll
     @GetMapping("/{id}")
     public RestaurantTo getTo(@PathVariable("id") int id){
         return super.getTo(id);
-    }
-
-    @GetMapping("/{id}/votes")
-    @Transactional
-    public Vote voting(@PathVariable("id") int id){
-        return super.vote(id);
     }
 }

@@ -1,5 +1,8 @@
 package ru.zippospb.restvote.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Where;
@@ -10,6 +13,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
+@NoArgsConstructor
+@Setter
+@Getter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Table(name = "restaurants")
 public class Restaurant extends AbstractNamedEntity {
@@ -19,8 +25,6 @@ public class Restaurant extends AbstractNamedEntity {
     @OrderBy("name ASC")
     @Where(clause = "date=CURRENT_DATE")
     private List<Dish> dishes;
-
-    public Restaurant() {}
 
     public Restaurant(Integer id, String name, Dish... dishes) {
         super(id, name);
@@ -40,13 +44,5 @@ public class Restaurant extends AbstractNamedEntity {
                 super.toString() +
                 (dishes != null ? dishes.toString() : "dishes=[]") +
                 "} ";
-    }
-
-    public List<Dish> getDishes() {
-        return dishes;
-    }
-
-    public void setDishes(List<Dish> dishes) {
-        this.dishes = dishes;
     }
 }
