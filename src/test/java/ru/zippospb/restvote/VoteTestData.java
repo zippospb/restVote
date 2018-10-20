@@ -1,5 +1,6 @@
 package ru.zippospb.restvote;
 
+import org.springframework.test.web.servlet.ResultMatcher;
 import ru.zippospb.restvote.model.Vote;
 
 import java.time.LocalDate;
@@ -7,12 +8,14 @@ import java.time.LocalTime;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static ru.zippospb.restvote.RestaurantTestData.*;
 import static ru.zippospb.restvote.UserTestData.*;
 import static ru.zippospb.restvote.model.AbstractBaseEntity.START_SEQ;
+import static ru.zippospb.restvote.web.json.JsonUtil.writeIgnoreProps;
 
 public class VoteTestData {
-    public final static int U1R1_VOTE_ID = START_SEQ + 18;
+    public final static int U1R1_VOTE_ID = START_SEQ + 19;
 
     public final static Vote USER1_VOTE1 = new Vote(U1R1_VOTE_ID, USER1, REST1, LocalDate.of(2018, 7, 20), LocalTime.of(10, 0));
     public final static Vote USER2_VOTE1 = new Vote(U1R1_VOTE_ID + 1, USER2, REST2, LocalDate.of(2018, 7, 20), LocalTime.of(11, 0));
@@ -43,5 +46,9 @@ public class VoteTestData {
         assertThat(actual).isEqualToIgnoringGivenFields(expected, "restaurant", "user");
         assertThat(actual.getUser().getId()).isEqualTo(expected.getUser().getId());
         assertThat(actual.getRestaurant().getId()).isEqualTo(expected.getRestaurant().getId());
+    }
+
+    public static ResultMatcher contentJson(Vote expected) {
+        return content().json(writeIgnoreProps(expected, "time", "user"));
     }
 }
