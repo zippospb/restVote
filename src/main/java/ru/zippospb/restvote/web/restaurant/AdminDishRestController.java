@@ -71,18 +71,13 @@ public class AdminDishRestController {
     }
 
     @PutMapping("/{dishId}")
-    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable("restId") int restId,
                        @PathVariable("dishId") int dishId,
                        @Valid @RequestBody Dish dish){
         log.info("update {} for restaurant {}", dish, dishId);
 
-        assureIdConsistent(dish, dishId);
-        Restaurant restaurant = restService.get(restId);
-        dish.setRestaurantId(restaurant.getId());
-
-        dishService.update(dish);
+        dishService.update(dish, dishId, restId);
     }
 
     @DeleteMapping("{dishId}")

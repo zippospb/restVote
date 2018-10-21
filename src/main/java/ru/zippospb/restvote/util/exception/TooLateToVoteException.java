@@ -1,7 +1,9 @@
 package ru.zippospb.restvote.util.exception;
 
-public class TooLateToVoteException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class TooLateToVoteException extends ApplicationException {
     public TooLateToVoteException(String message) {
-        super(message);
+        super(ErrorType.REVOTE_ERROR, message, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

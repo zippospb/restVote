@@ -12,7 +12,7 @@ public interface DishService {
 
     Dish create(Dish dish);
 
-    void update(Dish dish);
+    void update(Dish dish, int dishId, int restId);
 
     List<Dish> getAllByDate(int restId, LocalDate date);
 

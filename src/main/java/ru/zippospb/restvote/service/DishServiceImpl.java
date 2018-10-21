@@ -2,8 +2,10 @@ package ru.zippospb.restvote.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.zippospb.restvote.model.Dish;
+import ru.zippospb.restvote.model.Restaurant;
 import ru.zippospb.restvote.repository.datajpa.CrudDishRepository;
 
 import java.time.LocalDate;
@@ -13,11 +15,15 @@ import static ru.zippospb.restvote.util.ValidationUtil.*;
 
 @Repository
 public class DishServiceImpl implements DishService {
+
     private final CrudDishRepository repository;
 
+    private final RestaurantService restService;
+
     @Autowired
-    public DishServiceImpl(CrudDishRepository repository) {
+    public DishServiceImpl(CrudDishRepository repository, RestaurantService restService) {
         this.repository = repository;
+        this.restService = restService;
     }
 
     public List<Dish> getAll(int restId){
@@ -42,8 +48,14 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public void update(Dish dish) {
+    @Transactional
+    public void update(Dish dish, int dishId, int restId) {
         Assert.notNull(dish, "dish must not be null");
+        assureIdConsistent(dish, dishId);
+
+        Restaurant restaurant = restService.get(restId);
+        dish.setRestaurantId(restaurant.getId());
+
         checkNotFoundWithId(repository.save(dish), dish.getId());
     }
 

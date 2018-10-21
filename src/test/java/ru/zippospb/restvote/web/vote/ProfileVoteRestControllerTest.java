@@ -12,6 +12,7 @@ import ru.zippospb.restvote.model.User;
 import ru.zippospb.restvote.model.Vote;
 import ru.zippospb.restvote.repository.datajpa.CrudVoteRepository;
 import ru.zippospb.restvote.service.VoteService;
+import ru.zippospb.restvote.util.exception.ErrorType;
 import ru.zippospb.restvote.web.AbstractControllerTest;
 
 import java.time.LocalDate;
@@ -119,6 +120,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
         mockMvc.perform(get(REST_URL + "restaurants/" + REST1_ID + "/votes")
                 .with(userHttpBasic(USER1)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(ErrorType.REVOTE_ERROR));
     }
 }
