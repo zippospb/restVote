@@ -14,7 +14,7 @@ import static ru.zippospb.restvote.web.security.SecurityUtil.authUserId;
 @RestController
 @RequestMapping(ProfileVoteRestController.REST_URL)
 public class ProfileVoteRestController {
-    final static String REST_URL = "/rest/profile/";
+    final static String REST_URL = "/rest/";
 
     private final VoteService voteService;
 
@@ -23,18 +23,18 @@ public class ProfileVoteRestController {
         this.voteService = voteService;
     }
 
-    @GetMapping("restaurants/{restId}/votes")
+    @PostMapping("restaurants/{restId}/votes")
     public Vote vote(@PathVariable("restId") int restId){
         return voteService.vote(SecurityUtil.get().getUser(), restId);
     }
 
-    @GetMapping("/vote")
+    @GetMapping("profile/vote")
     public Vote get(){
         Vote vote = voteService.getByUserIdAndDate(authUserId(), LocalDate.now());
         return vote == null ? getEmptyVoteByDate(LocalDate.now()) : vote;
     }
 
-    @GetMapping("/vote/by")
+    @GetMapping("profile/vote/by")
     public Vote getByDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
         Vote vote = voteService.getByUserIdAndDate(authUserId(), date);
         return vote == null ? getEmptyVoteByDate(date) : vote;

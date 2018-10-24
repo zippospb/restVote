@@ -3,9 +3,9 @@
 [![Build Status](https://www.travis-ci.org/zippospb/restVote.svg?branch=master)](https://www.travis-ci.org/zippospb/restVote.svg)
 [![codecov](https://codecov.io/gh/zippospb/restVote/branch/master/graph/badge.svg)](https://codecov.io/gh/zippospb/restVote/branch/master/graph/badge.svg)
 
-#Restaurant Voting system
+# Restaurant Voting system
 
-##TASK:
+## TASK:
 
 Build a voting system for deciding where to have lunch.
 
@@ -25,7 +25,7 @@ Build a voting system for deciding where to have lunch.
     
 - Each restaurant provides new menu each day.
 
-##DESCRIPTION
+## DESCRIPTION
 - There are 4 entities in project: User, Restaurant, Dish and Vote.  
 
 - Users have following fields: id; name; email(must be unique); password; Role (ROLE_ADMIN and ROLE_USER).  
@@ -40,9 +40,9 @@ Build a voting system for deciding where to have lunch.
 
 - There is basic authentication, for admin it is: admin@gmail.com password:Admin, for first user it is: login:user@mail.ru password:qwert, for second user it is: login:user2@mail.ru password:asdfg.  
 
-#####Admins can create, delete, update users,restaurants and dishes.
+##### Admins can create, delete, update users,restaurants and dishes.
   
-#####Authorized admins HTTP requests:
+##### Authorized admins HTTP requests:
 
 GET:    `/rest/admin/users` Gets all users
 
@@ -78,9 +78,9 @@ DELETE: `/rest/admin/restaurants/{restId}/dishes/{dishId}` Delete dish by restau
 
 PUT:    `/rest/admin/restaurants/{restId}/dishes/{dishId}` Update dish by restaurant id and dish id
 
-#####Users can delete and update self profile, watch restaurants with dishes, watch self votes and can vote for certain restaurant.  
+##### Users can delete and update self profile, watch self votes and can vote for certain restaurant.  
 
-#####Authorized Users HTTP requests:
+##### Authorized Users HTTP requests:
 
 GET:    `/rest/profile` Get logged user
 
@@ -92,20 +92,22 @@ GET:    `/rest/profile/vote` Get current day logged user vote
 
 GET:    `/rest/profile/vote/by` Get logged user vote by date
 
-GET:    `/rest/profile/restaurants` Get all restaurants with current date dishes
-
-GET:    `/rest/profile/restaurants/{restId}` Get restaurant with current date dishes by id
-
 GET:    `/rest/profile/restaurants/{restId}/votes` Vote by restaurant with id
 
-#####Unauthorized users HTTP requests:
+##### Unauthorized users can watch restaurants with dishes and register
+
+##### Unauthorized users HTTP requests:
 
 POST:   `/rest/profile/register` Register new user
 
-###CURLS
+GET:    `/rest/restaurants` Get all restaurants with current date dishes
+
+GET:    `/rest/restaurants/{restId}` Get restaurant with current date dishes by id
+
+### CURLS
 (application deployed in application context restvote).
 
-#####Curl samples for Authorized admins:
+##### Curl samples for Authorized admins:
 
 get All Users  
 `curl -i http://localhost:8080/restvote/rest/admin/users --user admin@gmail.com:lkjh33498yhnbyfgi563`
@@ -124,12 +126,6 @@ delete user with id=100000
 
 update user with id=100000  
 `curl -i -X PUT -d '{"id":100000,"name":"User1","email":"updated@gmail.com","roles":["ROLE_USER"],"password":"qwert"}' -H 'Content-Type: application/json' http://localhost:8080/restvote/rest/admin/users/100000 --user admin@gmail.com:lkjh33498yhnbyfgi563`
-
-get all restaurants  
-`curl -i http://localhost:8080/restvote/rest/admin/restaurants --user admin@gmail.com:lkjh33498yhnbyfgi563`
-
-get restaurant with id=100003  
-`curl -i http://localhost:8080/restvote/rest/admin/restaurants/100003 --user admin@gmail.com:lkjh33498yhnbyfgi563`
 
 create restaurant  
 `curl -i -X POST -d '{"name":"New Restaurant"}' -H 'Content-Type:application/json;charset=UTF-8' http://localhost:8080/restvote/rest/admin/restaurants --user admin@gmail.com:lkjh33498yhnbyfgi563`
@@ -158,7 +154,7 @@ delete dish by restaurant id and dish id
 update dish by restaurant id and dish id  
 `curl -i -X PUT -d '{"name":"updated dish","price":50,"date":"2018-10-01"}' -H 'Content-Type: application/json' http://localhost:8080/restvote/rest/admin/restaurants/100003/dishes/100006 --user admin@gmail.com:lkjh33498yhnbyfgi563`
 
-####Curl samples for Authorized users  
+#### Curl samples for Authorized users  
 get the current user  
 `curl -i http://localhost:8080/restvote/rest/profile --user user@mail.ru:qwert`
 
@@ -174,11 +170,16 @@ get the logged user current date vote
 get the logged user vote by date
 `curl -i http://localhost:8080/restvote/rest/profile/vote/by?date=2018-07-20 --user user@mail.ru:qwert`
 
+Vote by restaurant with id  
+`curl -i -X POST http://localhost:8080/restvote/rest/restaurants/100003/votes  --user user@mail.ru:qwert`
+
+#### Curl samples for Unauthorized users
+
+register new user
+`curl -i -X POST -d '{"name":"new user","email":"new_registered@gmail.com","password":"zxcvb"}' -H 'Content-Type: application/json' http://localhost:8080/restvote/rest/profile/register`
+
 get all restaurants with current date dishes  
-`curl -i http://localhost:8080/restvote/rest/profile/restaurants --user user@mail.ru:qwert`
+`curl -i http://localhost:8080/restvote/rest/restaurants --user user@mail.ru:qwert`
 
 get restaurant with current date dishes by id  
-`curl -i http://localhost:8080/restvote/rest/profile/restaurants/100003 --user user@mail.ru:qwert`
-
-Vote by restaurant with id  
-`curl -i http://localhost:8080/restvote/rest/profile/restaurant/100003/votes  --user user@mail.ru:qwert`
+`curl -i http://localhost:8080/restvote/rest/restaurants/100003 --user user@mail.ru:qwert`

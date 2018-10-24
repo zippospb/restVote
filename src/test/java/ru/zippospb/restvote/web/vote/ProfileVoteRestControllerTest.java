@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,7 +42,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     @Test
     void testGetCurrent() throws Exception {
         Vote vote = voteRepository.save(new Vote(USER1, REST2));
-        mockMvc.perform(get(REST_URL + "/vote")
+        mockMvc.perform(get(REST_URL + "profile/vote")
                 .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -51,7 +52,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testGetCurrentNotFound() throws Exception {
-        mockMvc.perform(get(REST_URL + "/vote")
+        mockMvc.perform(get(REST_URL + "profile/vote")
                 .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -60,8 +61,14 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testGetCurrentUnAuth() throws Exception {
+        mockMvc.perform(get(REST_URL + "profile/vote"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void testGetByDate() throws Exception {
-        mockMvc.perform(get(REST_URL + "/vote/by?date=" + USER1_VOTE1.getDate())
+        mockMvc.perform(get(REST_URL + "profile/vote/by?date=" + USER1_VOTE1.getDate())
                 .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -71,7 +78,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testGetByDateNotFound() throws Exception {
-        mockMvc.perform(get(REST_URL + "/vote/by?date=" + "1999-01-01")
+        mockMvc.perform(get(REST_URL + "profile/vote/by?date=" + "1999-01-01")
                 .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -83,7 +90,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     void testCreateNewVote() throws Exception {
         Vote expected = new Vote(new User(USER1), new Restaurant(REST1));
 
-        ResultActions actions = mockMvc.perform(get(REST_URL + "restaurants/" + REST1_ID + "/votes")
+        ResultActions actions = mockMvc.perform(post(REST_URL + "restaurants/" + REST1_ID + "/votes")
                 .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -100,7 +107,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
         voteService.vote(USER1, REST2.getId());
         Vote expected = new Vote(new User(USER1), new Restaurant(REST1));
         ReflectionTestUtils.setField(voteService, "END_TIME_OF_VOTE", LocalTime.MAX);
-        ResultActions actions = mockMvc.perform(get(REST_URL + "restaurants/" + REST1_ID + "/votes")
+        ResultActions actions = mockMvc.perform(post(REST_URL + "restaurants/" + REST1_ID + "/votes")
                 .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -117,10 +124,16 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     void testTooLateToUpdateVote() throws Exception {
         voteRepository.save(new Vote(USER1, REST2));
         ReflectionTestUtils.setField(voteService, "END_TIME_OF_VOTE", LocalTime.MIN);
-        mockMvc.perform(get(REST_URL + "restaurants/" + REST1_ID + "/votes")
+        mockMvc.perform(post(REST_URL + "restaurants/" + REST1_ID + "/votes")
                 .with(userHttpBasic(USER1)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(ErrorType.REVOTE_ERROR));
+    }
+
+    @Test
+    void testVoteUnAuth() throws Exception {
+        mockMvc.perform(post(REST_URL + "restaurants/" + REST1_ID + "/votes"))
+                .andExpect(status().isUnauthorized());
     }
 }

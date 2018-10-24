@@ -9,24 +9,11 @@ import ru.zippospb.restvote.model.Restaurant;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = AdminRestaurantRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminRestaurantRestController extends AbstractRestaurantController {
     final static String REST_URL = "/rest/admin/restaurants";
-
-    @Override
-    @GetMapping
-    public List<Restaurant> getAll() {
-        return super.getAll();
-    }
-
-    @Override
-    @GetMapping("/{id}")
-    public Restaurant get(@PathVariable("id") int id) {
-        return super.get(id);
-    }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {

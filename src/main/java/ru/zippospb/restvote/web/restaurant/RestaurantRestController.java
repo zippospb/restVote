@@ -10,9 +10,9 @@ import ru.zippospb.restvote.to.RestaurantTo;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = ProfileRestaurantRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class ProfileRestaurantRestController extends  AbstractRestaurantController {
-    final static String REST_URL = "/rest/profile/restaurants";
+@RequestMapping(value = RestaurantRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class RestaurantRestController extends  AbstractRestaurantController {
+    final static String REST_URL = "/rest/restaurants";
 
     @Override
     @GetMapping

@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Range;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -15,7 +16,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "dishes")
+@Table(name = "dishes", uniqueConstraints =
+    @UniqueConstraint(name = "dishes_unique_date_restaurant_name_idx",
+        columnNames = {"date", "restaurant_id", "name"}))
 public class Dish extends AbstractNamedEntity {
 
     @NotNull
