@@ -1,13 +1,20 @@
 package ru.zippospb.restvote.to;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.zippospb.restvote.model.Dish;
 import ru.zippospb.restvote.model.Restaurant;
 
 import java.util.List;
 
+@Getter
+@NoArgsConstructor
 public class RestaurantTo extends BaseTo {
+    @Setter
     private String name;
 
+    @Setter
     private List<Dish> dishes;
 
     private Integer voteCount;
@@ -17,28 +24,6 @@ public class RestaurantTo extends BaseTo {
         this.name = restaurant.getName();
         this.dishes = restaurant.getDishes();
         this.voteCount = voteCount;
-    }
-
-    public RestaurantTo() {}
-
-    public String getName() {
-        return name;
-    }
-
-    public List<Dish> getDishes() {
-        return dishes;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDishes(List<Dish> dishes) {
-        this.dishes = dishes;
-    }
-
-    public Integer getVoteCount() {
-        return voteCount;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package ru.zippospb.restvote.util.exception;
 
+import lombok.Getter;
+
+@Getter
 public class ErrorInfo {
     private final String url;
     private final ErrorType type;
@@ -11,21 +14,5 @@ public class ErrorInfo {
         this.type = type;
         this.typeMessage = typeMessage;
         this.details = details;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public ErrorType getType() {
-        return type;
-    }
-
-    public String getTypeMessage() {
-        return typeMessage;
-    }
-
-    public String[] getDetails() {
-        return details;
     }
 }

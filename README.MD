@@ -1,11 +1,10 @@
-
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/217824fe0337460f8f055f65ae4465de)](https://app.codacy.com/app/zippospb/restVote?utm_source=github.com&utm_medium=referral&utm_content=zippospb/restVote&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://www.travis-ci.org/zippospb/restVote.svg?branch=master)](https://www.travis-ci.org/zippospb/restVote.svg)
 [![codecov](https://codecov.io/gh/zippospb/restVote/branch/master/graph/badge.svg)](https://codecov.io/gh/zippospb/restVote/branch/master/graph/badge.svg)
 
 # Restaurant Voting system
 
-## TASK:
+## TASK
 
 Build a voting system for deciding where to have lunch.
 
@@ -40,9 +39,9 @@ Build a voting system for deciding where to have lunch.
 
 - There is basic authentication, for admin it is: admin@gmail.com password:Admin, for first user it is: login:user@mail.ru password:qwert, for second user it is: login:user2@mail.ru password:asdfg.  
 
-##### Admins can create, delete, update users,restaurants and dishes.
+##### Admins can create, delete, update users,restaurants and dishes
   
-##### Authorized admins HTTP requests:
+##### Authorized admins HTTP requests
 
 GET:    `/rest/admin/users` Gets all users
 
@@ -78,9 +77,9 @@ DELETE: `/rest/admin/restaurants/{restId}/dishes/{dishId}` Delete dish by restau
 
 PUT:    `/rest/admin/restaurants/{restId}/dishes/{dishId}` Update dish by restaurant id and dish id
 
-##### Users can delete and update self profile, watch self votes and can vote for certain restaurant.  
+##### Users can delete and update self profile, watch self votes and can vote for certain restaurant  
 
-##### Authorized Users HTTP requests:
+##### Authorized Users HTTP requests
 
 GET:    `/rest/profile` Get logged user
 
@@ -96,7 +95,7 @@ GET:    `/rest/profile/restaurants/{restId}/votes` Vote by restaurant with id
 
 ##### Unauthorized users can watch restaurants with dishes and register
 
-##### Unauthorized users HTTP requests:
+##### Unauthorized users HTTP requests
 
 POST:   `/rest/profile/register` Register new user
 
@@ -107,7 +106,7 @@ GET:    `/rest/restaurants/{restId}` Get restaurant with current date dishes by 
 ### CURLS
 (application deployed in application context restvote).
 
-##### Curl samples for Authorized admins:
+##### Curl samples for Authorized admins
 
 get All Users  
 `curl -i http://localhost:8080/restvote/rest/admin/users --user admin@gmail.com:lkjh33498yhnbyfgi563`
